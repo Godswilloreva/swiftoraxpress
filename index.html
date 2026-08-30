@@ -84,9 +84,14 @@
             top: 0px !important;
         }
 
-        /* Third-Party Overrides */
-        .goog-te-banner-frame, .skiptranslate, .goog-te-gadget-icon { display: none !important; }
+        /* Third-Party Google Translate Overrides & UI Polish */
+        .goog-te-banner-frame, .goog-te-gadget-icon { display: none !important; }
         .goog-te-gadget { color: transparent !important; font-size: 0 !important; }
+        
+        #google_translate_element {
+            display: inline-block;
+        }
+
         #google_translate_element select {
             background: var(--bg-card);
             color: var(--text-heading);
@@ -97,6 +102,10 @@
             font-size: 0.85rem;
             font-weight: 600;
             cursor: pointer;
+        }
+
+        #google_translate_element select:hover {
+            border-color: var(--brand-primary);
         }
 
         /* ==========================================
@@ -169,6 +178,11 @@
             cursor: pointer;
             font-weight: 600;
             font-size: 0.85rem;
+        }
+
+        .btn-theme:hover {
+            border-color: var(--brand-primary);
+            color: var(--brand-primary);
         }
 
         /* ==========================================
@@ -601,6 +615,8 @@
             .footer-grid { grid-template-columns: 1fr; }
             .hero-heading { font-size: 2.8rem; }
             .floating-hub { bottom: 20px; right: 20px; }
+            .header-controls { gap: 6px; }
+            #google_translate_element select { padding: 6px 8px; font-size: 0.75rem; }
         }
     </style>
 </head>
@@ -692,10 +708,10 @@
                     <label style="color: var(--text-muted); font-size: 0.85rem; font-weight: 600;">Display Currency:</label>
                     <select id="currencySelect" class="input-field" style="width: auto; padding: 6px 12px;">
                         <option value="USD">USD ($)</option>
-                        <option value="EUR">EUR (€)</option>
-                        <option value="GBP">GBP (£)</option>
-                        <option value="JPY">JPY (¥)</option>
-                        <option value="NGN">NGN ()</option>
+                        <option value="EUR">EUR (â‚¬)</option>
+                        <option value="GBP">GBP (Â£)</option>
+                        <option value="JPY">JPY (Â¥)</option>
+                        <option value="NGN">NGN (â‚¦)</option>
                     </select>
                 </div>
             </div>
@@ -865,10 +881,10 @@
             /* Exchange Rates Matrix Calculator */
             const exchangeRates = {
                 USD: { symbol: '$', rate: 1.0 },
-                EUR: { symbol: '€', rate: 0.92 },
-                GBP: { symbol: '£', rate: 0.78 },
-                JPY: { symbol: '¥', rate: 155.0 },
-                NGN: { symbol: '', rate: 1500.0 }
+                EUR: { symbol: 'â‚¬', rate: 0.92 },
+                GBP: { symbol: 'Â£', rate: 0.78 },
+                JPY: { symbol: 'Â¥', rate: 155.0 },
+                NGN: { symbol: 'â‚¦', rate: 1500.0 }
             };
 
             const destinationsData = [
