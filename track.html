@@ -10,6 +10,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
     
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
     <script type="text/javascript">
     var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
     (function(){
@@ -106,6 +108,12 @@
         .header-logo-img {
             height: 38px;
             width: auto;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
 
         .btn-back {
@@ -356,6 +364,28 @@
             color: var(--text-heading);
         }
 
+        .btn-download-pdf {
+            width: 100%;
+            margin-top: 16px;
+            background: var(--brand-gradient);
+            color: #000;
+            border: none;
+            padding: 12px;
+            border-radius: var(--radius-sm);
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: var(--shadow-glow);
+        }
+
+        .btn-download-pdf:hover {
+            opacity: 0.9;
+        }
+
         .customs-alert-card {
             background: rgba(239, 68, 68, 0.05);
             border: 1px solid rgba(239, 68, 68, 0.3);
@@ -382,6 +412,29 @@
 
         .fee-tag { color: var(--danger); font-weight: 800; font-size: 1.1rem; }
 
+        /* Floating Gmail Contact Widget */
+        .floating-gmail-btn {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background: #EA4335;
+            color: #FFF;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+            z-index: 999;
+            text-decoration: none;
+        }
+
+        .floating-gmail-btn:hover {
+            transform: scale(1.08);
+        }
+
         @media(max-width: 900px) {
             .dashboard-grid { grid-template-columns: 1fr; }
         }
@@ -393,7 +446,11 @@
         <a href="index.html" class="logo-container">
             <img src="swiftoralogo.png" alt="Swiftora Xpress Logo" class="header-logo-img">
         </a>
-        <a href="index.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i> Return to Terminal</a>
+        
+        <div class="nav-actions">
+            <div id="google_translate_element"></div>
+            <a href="index.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i> Return to Terminal</a>
+        </div>
     </header>
 
     <div class="container">
@@ -412,7 +469,23 @@
         <div class="dashboard-grid">
             <div>
                 <div class="card">
-                    <h3><i class="fa-solid fa-box"></i> Consignment</h3>
+                    <h3><i class="fa-solid fa-route"></i> Live Pipeline Telemetry</h3>
+                    
+                    <div class="timeline-container" id="timeline"></div>
+
+                    <div class="customs-alert-card" id="customsAlert" style="display:none;">
+                        <div class="alert-icon-wrap">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                        </div>
+                        <div class="alert-body">
+                            <h4 style="color:var(--danger); font-size:1.05rem; margin-bottom:6px;">Customs Inspection Hold</h4>
+                            <p style="font-size:0.88rem;">An outstanding clearance fee of <span class="fee-tag" id="customsFeeAmount">$0.00</span> is required to pass airport clearance and release package for door delivery.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3><i class="fa-solid fa-box"></i> Consignment Details</h3>
                     <div class="info-grid">
                         <div class="info-group">
                             <label>Item Description</label>
@@ -432,7 +505,9 @@
                         </div>
                     </div>
                 </div>
+            </div>
 
+            <div>
                 <div class="card">
                     <h3><i class="fa-solid fa-plane-departure"></i> Origin & Shipper Details</h3>
                     <div class="info-grid" style="margin-bottom: 24px;">
@@ -489,7 +564,11 @@
 
                 <div class="card">
                     <h3><i class="fa-solid fa-file-invoice-dollar"></i> Freight & Customs Receipt</h3>
-                    <div class="receipt-card">
+                    <div class="receipt-card" id="downloadableReceipt">
+                        <div style="text-align: center; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border-subtle);">
+                            <h4 style="color:var(--brand-primary); font-size:1.1rem;">SWIFTORA XPRESS LOGISTICS</h4>
+                            <p style="font-size:0.75rem; color:var(--text-muted);">Waybill Clearance Invoice Statement</p>
+                        </div>
                         <div class="receipt-line">
                             <span>Declared Package Value</span>
                             <span id="rcptValue">$0.00</span>
@@ -507,28 +586,28 @@
                             <span id="rcptTotalCost" style="color:var(--brand-primary);">$0.00</span>
                         </div>
                     </div>
-                </div>
-            </div>
 
-            <div>
-                <div class="card">
-                    <h3><i class="fa-solid fa-route"></i>Pipeline</h3>
-                    
-                    <div class="timeline-container" id="timeline"></div>
-
-                    <div class="customs-alert-card" id="customsAlert" style="display:none;">
-                        <div class="alert-icon-wrap">
-                            <i class="fa-solid fa-triangle-exclamation"></i>
-                        </div>
-                        <div class="alert-body">
-                            <h4 style="color:var(--danger); font-size:1.05rem; margin-bottom:6px;">Customs Inspection Hold</h4>
-                            <p style="font-size:0.88rem;">An outstanding clearance fee of <span class="fee-tag" id="customsFeeAmount">$0.00</span> is required to pass airport clearance and release package for door delivery.</p>
-                        </div>
-                    </div>
+                    <button class="btn-download-pdf" onclick="downloadReceiptPDF()">
+                        <i class="fa-solid fa-file-pdf"></i> Download Receipt (PDF)
+                    </button>
                 </div>
             </div>
         </div>
     </div>
+
+    <a href="mailto:support@swiftoraxpress.com" class="floating-gmail-btn" title="Contact Us via Email">
+        <i class="fa-solid fa-envelope"></i>
+    </a>
+
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'en',
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+            }, 'google_translate_element');
+        }
+    </script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -575,19 +654,16 @@
         });
 
         function populateDetails(data) {
-            // Carrier
             if (data.deliveryCompanyName) {
                 document.getElementById('carrierInfo').innerText = `${data.deliveryCompanyName} | ${data.deliveryCompanyAddress || ''} | ${data.deliveryCompanyPhone || ''}`;
             }
 
-            // Sender
             document.getElementById('sName').innerText = data.senderFullName || "--";
             document.getElementById('sAddr').innerText = data.senderAddress || "--";
             document.getElementById('sLoc').innerText = data.senderCurrentLocation || "--";
             document.getElementById('sPassport').innerText = data.senderPassportId || "--";
             document.getElementById('sSSN').innerText = data.senderSSN || "N/A";
 
-            // Receiver
             document.getElementById('rName').innerText = data.receiverFullName || "--";
             document.getElementById('rCountryState').innerText = `${data.countryOfDestination || '--'} (${data.receiverState || '--'})`;
             document.getElementById('rAddr').innerText = data.receiverHouseAddress || "--";
@@ -595,13 +671,11 @@
             document.getElementById('rPhone').innerText = data.receiverPhone || "--";
             document.getElementById('rSocialPhone').innerText = data.receiverSocialPhone || "--";
 
-            // Package
             document.getElementById('pkgDesc').innerText = data.packageName || "--";
             document.getElementById('pkgWeight').innerText = data.packageWeight || "--";
             document.getElementById('dispatchDate').innerText = data.dateOfSent ? new Date(data.dateOfSent).toLocaleString() : "--";
             document.getElementById('etaDate').innerText = data.dateToBeReceived ? new Date(data.dateToBeReceived).toLocaleString() : "--";
 
-            // Financials / Receipt
             document.getElementById('rcptValue').innerText = data.totalCostOfPackage || "$0.00";
             document.getElementById('rcptCustomsFee').innerText = data.customClearanceFee || "$0.00";
             document.getElementById('rcptTotalCost').innerText = data.totalCostOfPackage || "$0.00";
@@ -616,7 +690,6 @@
             const arrivedDestination = data.arrivedAtDestination === true || data.arrivedAtDestination === "true";
             const customsFee = data.customClearanceFee || "$0.00";
 
-            /* Timeline Pipeline definitions */
             const pipeline = [
                 { name: "Picked by Courier", delay: 0, icon: "fa-box" },
                 { name: "Picked & Ready for Shipping", delay: 10, icon: "fa-dolly" },
@@ -634,9 +707,6 @@
             let currentActiveIndex = 0;
 
             pipeline.forEach((step, idx) => {
-                let isCompleted = false;
-                let isActive = false;
-
                 if (step.forceTrigger || elapsedMinutes >= step.delay) {
                     currentActiveIndex = idx;
                 }
@@ -680,7 +750,6 @@
                 container.appendChild(stepEl);
             });
 
-            // Update top header status badge & Customs alert block
             if (isCustomHold && currentActiveIndex >= 5) {
                 statusBadge.className = "status-badge hold";
                 statusBadge.innerHTML = `<span class="pulse-dot pulse-red"></span> Action Required: Customs Clearance Pending`;
@@ -691,6 +760,23 @@
                 statusBadge.innerHTML = `<span class="pulse-dot pulse-blue"></span> Active Flight Transit In Progress`;
                 document.getElementById('customsAlert').style.display = 'none';
             }
+        }
+    </script>
+
+    <script>
+        function downloadReceiptPDF() {
+            const element = document.getElementById('downloadableReceipt');
+            const trackingId = document.getElementById('displayTrackingId').innerText || 'Receipt';
+            
+            const opt = {
+                margin:       10,
+                filename:     `Receipt_${trackingId}.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2 },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(element).save();
         }
     </script>
 </body>
