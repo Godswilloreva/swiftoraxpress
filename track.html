@@ -610,7 +610,7 @@
     </script>
     <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
-   <script type="module">
+  <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
@@ -766,202 +766,315 @@
         }
     }
 
-    // Interactive View & Print Receipt logic
+    // Professional Receipt Window Generator
     document.getElementById('downloadPdfBtn').addEventListener('click', () => {
         if (!liveShipmentData) {
-            alert("Shipment record is still loading. Please wait a moment.");
+            alert("Shipment details are still loading. Please wait a moment.");
             return;
         }
 
         const d = liveShipmentData;
-
-        // Open a clean pop-up window for full preview
-        const receiptWindow = window.open('', '_blank', 'width=850,height=900,scrollbars=yes');
+        const receiptWindow = window.open('', '_blank', 'width=900,height=950,scrollbars=yes');
 
         const receiptHTML = `
             <!DOCTYPE html>
-            <html>
+            <html lang="en">
             <head>
-                <title>Receipt - Waybill #${currentTrackingId}</title>
+                <meta charset="UTF-8">
+                <title>Waybill Receipt - ${currentTrackingId}</title>
                 <link rel="preconnect" href="https://fonts.googleapis.com">
                 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-                <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+                <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Great+Vibes&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
                 <style>
+                    * { box-sizing: border-box; margin: 0; padding: 0; }
                     body {
-                        font-family: Arial, sans-serif;
-                        background-color: #f4f6f9;
-                        margin: 0;
-                        padding: 20px;
-                        color: #111;
+                        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+                        background-color: #eef2f6;
+                        color: #1e293b;
+                        padding: 30px 15px;
+                        line-height: 1.5;
                     }
                     .action-bar {
-                        max-width: 750px;
+                        max-width: 800px;
                         margin: 0 auto 20px auto;
                         display: flex;
                         justify-content: space-between;
                         align-items: center;
                     }
                     .btn-print {
-                        background: #0088CC;
-                        color: #fff;
+                        background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+                        color: #ffffff;
                         border: none;
-                        padding: 10px 20px;
+                        padding: 12px 24px;
                         font-size: 14px;
-                        font-weight: bold;
-                        border-radius: 5px;
+                        font-weight: 700;
+                        border-radius: 8px;
                         cursor: pointer;
+                        box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
                     }
-                    .btn-print:hover { background: #006699; }
+                    .btn-print:hover { opacity: 0.95; }
+                    
+                    /* RECEIPT CONTAINER */
                     .receipt-card {
-                        background: #fff;
-                        max-width: 750px;
+                        background: #ffffff;
+                        max-width: 800px;
                         margin: 0 auto;
-                        padding: 40px;
-                        border: 1px solid #ddd;
-                        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+                        padding: 50px 45px;
+                        border-radius: 4px;
+                        box-shadow: 0 10px 30px rgba(0,0,0,0.06);
                         position: relative;
                         overflow: hidden;
+                        border: 1px solid #e2e8f0;
                     }
+                    
+                    /* FULLY PAID WATERMARK */
                     .watermark {
                         position: absolute;
-                        top: 35%;
-                        left: 10%;
-                        transform: rotate(-30deg);
-                        font-size: 70px;
+                        top: 38%;
+                        left: 14%;
+                        transform: rotate(-25deg);
+                        font-family: 'Inter', sans-serif;
+                        font-size: 72px;
                         font-weight: 900;
-                        color: rgba(16, 185, 129, 0.12);
-                        border: 8px solid rgba(16, 185, 129, 0.12);
-                        padding: 10px 30px;
+                        color: rgba(16, 185, 129, 0.08);
+                        border: 8px dashed rgba(16, 185, 129, 0.12);
+                        padding: 12px 40px;
                         text-transform: uppercase;
-                        border-radius: 12px;
+                        letter-spacing: 6px;
+                        border-radius: 16px;
                         pointer-events: none;
                         user-select: none;
                     }
+                    
+                    /* HEADER */
                     .header {
-                        border-bottom: 2px solid #00F0FF;
-                        padding-bottom: 15px;
-                        margin-bottom: 20px;
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: flex-start;
+                        border-bottom: 2px solid #0f172a;
+                        padding-bottom: 20px;
+                        margin-bottom: 25px;
                     }
-                    .header h2 { color: #0088CC; margin: 0; font-size: 24px; }
-                    .header p { margin: 3px 0 0 0; color: #555; font-size: 13px; }
+                    .brand-title {
+                        font-family: 'Cinzel', serif;
+                        font-size: 22px;
+                        color: #0f172a;
+                        letter-spacing: 1px;
+                    }
+                    .brand-sub {
+                        font-size: 11px;
+                        color: #64748b;
+                        text-transform: uppercase;
+                        letter-spacing: 1px;
+                        font-weight: 600;
+                        margin-top: 3px;
+                    }
+                    .waybill-tag {
+                        text-align: right;
+                        background: #f8fafc;
+                        border: 1px solid #e2e8f0;
+                        padding: 8px 14px;
+                        border-radius: 6px;
+                    }
+                    .waybill-tag span {
+                        font-size: 10px;
+                        color: #64748b;
+                        text-transform: uppercase;
+                        display: block;
+                        font-weight: 700;
+                    }
+                    .waybill-tag strong {
+                        font-size: 13px;
+                        color: #0284c7;
+                    }
+
+                    /* SECTIONS & TABLES */
+                    .section-block { margin-bottom: 22px; }
                     .section-title {
-                        background: #f0f4f8;
-                        padding: 6px 10px;
-                        margin: 0 0 10px 0;
-                        font-size: 12px;
-                        color: #333;
-                        font-weight: bold;
+                        font-size: 11px;
+                        font-weight: 800;
+                        color: #475569;
+                        text-transform: uppercase;
+                        letter-spacing: 0.8px;
+                        background: #f1f5f9;
+                        padding: 6px 12px;
+                        border-left: 3px solid #0284c7;
+                        margin-bottom: 10px;
                     }
                     table { width: 100%; font-size: 12px; border-collapse: collapse; }
-                    td { padding: 5px; vertical-align: top; }
-                    .footer {
+                    td { padding: 6px 8px; vertical-align: top; }
+                    .lbl { font-weight: 600; color: #475569; width: 35%; }
+                    .val { font-weight: 500; color: #0f172a; }
+
+                    /* FINANCIAL TABLE */
+                    .fin-table { margin-top: 8px; border: 1px solid #e2e8f0; }
+                    .fin-table td { border-bottom: 1px solid #f1f5f9; }
+                    .fin-table tr:last-child td { border-bottom: none; }
+                    .total-row td {
+                        background: #f8fafc;
+                        font-size: 13px;
+                        font-weight: 800;
+                        color: #0f172a;
+                        padding: 10px 8px;
+                    }
+
+                    /* STAMP & SIGNATURE */
+                    .footer-signatures {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        margin-top: 35px;
+                        padding-top: 20px;
+                        border-top: 1px dashed #cbd5e1;
+                    }
+                    
+                    .official-stamp {
+                        border: 3px double #1e3a8a;
+                        width: 130px;
+                        height: 130px;
+                        border-radius: 50%;
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        justify-content: center;
+                        text-align: center;
+                        color: #1e3a8a;
+                        transform: rotate(-8deg);
+                        padding: 6px;
+                    }
+                    .stamp-top { font-size: 8px; font-weight: 800; letter-spacing: 0.5px; }
+                    .stamp-stars { font-size: 10px; margin: 2px 0; color: #1e3a8a; }
+                    .stamp-mid {
+                        font-size: 9px;
+                        font-weight: 900;
+                        text-transform: uppercase;
+                        border-top: 1px solid #1e3a8a;
+                        border-bottom: 1px solid #1e3a8a;
+                        padding: 2px 0;
+                        width: 100%;
+                    }
+                    .stamp-bot { font-size: 7px; font-weight: 700; margin-top: 2px; }
+
+                    .signature-box { text-align: right; width: 220px; }
+                    .sig-script {
+                        font-family: 'Great Vibes', cursive;
+                        font-size: 34px;
+                        color: #0f172a;
+                        line-height: 1;
+                        margin-bottom: -4px;
+                    }
+                    .sig-line {
+                        border-top: 1.5px solid #334155;
+                        padding-top: 4px;
+                        font-size: 11px;
+                        font-weight: 700;
+                        color: #0f172a;
+                    }
+                    .sig-sub { font-size: 9px; color: #64748b; margin-top: 1px; }
+
+                    .receipt-footer-note {
                         margin-top: 30px;
                         text-align: center;
                         font-size: 10px;
-                        color: #777;
-                        border-top: 1px solid #eee;
-                        padding-top: 10px;
+                        color: #94a3b8;
                     }
+
                     @media print {
                         .action-bar { display: none; }
-                        body { background: #fff; padding: 0; }
-                        .receipt-card { border: none; box-shadow: none; padding: 20px; }
+                        body { background: #ffffff; padding: 0; }
+                        .receipt-card { border: none; box-shadow: none; padding: 10px; }
                     }
                 </style>
             </head>
             <body>
                 <div class="action-bar">
-                    <span style="font-size: 14px; font-weight: bold; color: #555;">Document Preview</span>
-                    <button class="btn-print" onclick="window.print()">Print or Save as PDF</button>
+                    <span style="font-size: 13px; font-weight: 600; color: #475569;">Document Verification View</span>
+                    <button class="btn-print" onclick="window.print()">Print / Save as PDF</button>
                 </div>
 
                 <div class="receipt-card">
                     <div class="watermark">FULLY PAID</div>
 
                     <div class="header">
-                        <h2>SWIFTORA XPRESS LOGISTICS</h2>
-                        <p>Official Consignment Waybill & Freight Clearance Receipt</p>
-                        <p style="font-weight: bold; font-size: 14px; color: #000; margin-top: 5px;">Tracking Waybill ID: ${currentTrackingId}</p>
+                        <div>
+                            <div class="brand-title">SWIFTORA XPRESS</div>
+                            <div class="brand-sub">Consignment Clearance & Logistics Receipt</div>
+                        </div>
+                        <div class="waybill-tag">
+                            <span>Waybill Tracking ID</span>
+                            <strong>${currentTrackingId}</strong>
+                        </div>
                     </div>
 
-                    <div style="margin-bottom: 20px;">
-                        <div class="section-title">1. CARRIER & SERVICE DETAILS</div>
+                    <div class="section-block">
+                        <div class="section-title">1. Carrier & Service Provider</div>
                         <table>
-                            <tr><td style="font-weight: bold; width: 35%;">Delivery Carrier:</td><td>${d.deliveryCompanyName || 'Swiftora Xpress Terminal'}</td></tr>
-                            <tr><td style="font-weight: bold;">Company Address:</td><td>${d.deliveryCompanyAddress || 'Global Freight Station'}</td></tr>
-                            <tr><td style="font-weight: bold;">Direct Contact:</td><td>${d.deliveryCompanyPhone || '+1 (800) SWIFTORA'}</td></tr>
+                            <tr><td class="lbl">Delivery Carrier:</td><td class="val">${d.deliveryCompanyName || 'Swiftora Xpress Logistics Terminal'}</td></tr>
+                            <tr><td class="lbl">Station Address:</td><td class="val">${d.deliveryCompanyAddress || 'Global Station Facility Hub'}</td></tr>
+                            <tr><td class="lbl">Direct Contact:</td><td class="val">${d.deliveryCompanyPhone || '+1 (800) SWIFTORA'}</td></tr>
                         </table>
                     </div>
 
-                    <div style="margin-bottom: 20px;">
-                        <div class="section-title">2. CONSIGNMENT SPECIFICATIONS</div>
+                    <div class="section-block">
+                        <div class="section-title">2. Consignment Specifications</div>
                         <table>
-                            <tr><td style="font-weight: bold; width: 35%;">Package Description:</td><td>${d.packageName || 'N/A'}</td></tr>
-                            <tr><td style="font-weight: bold;">Freight Mass / Weight:</td><td>${d.packageWeight || 'N/A'}</td></tr>
-                            <tr><td style="font-weight: bold;">Dispatch Date:</td><td>${d.dateOfSent ? new Date(d.dateOfSent).toLocaleString() : 'N/A'}</td></tr>
-                            <tr><td style="font-weight: bold;">Estimated Arrival (ETA):</td><td>${d.dateToBeReceived ? new Date(d.dateToBeReceived).toLocaleString() : 'N/A'}</td></tr>
+                            <tr><td class="lbl">Package Description:</td><td class="val">${d.packageName || 'N/A'}</td></tr>
+                            <tr><td class="lbl">Freight Mass / Weight:</td><td class="val">${d.packageWeight || 'N/A'}</td></tr>
+                            <tr><td class="lbl">Dispatch Timestamp:</td><td class="val">${d.dateOfSent ? new Date(d.dateOfSent).toLocaleString() : 'N/A'}</td></tr>
+                            <tr><td class="lbl">Estimated Arrival (ETA):</td><td class="val">${d.dateToBeReceived ? new Date(d.dateToBeReceived).toLocaleString() : 'N/A'}</td></tr>
                         </table>
                     </div>
 
-                    <div style="margin-bottom: 20px;">
-                        <div class="section-title">3. ORIGIN & SHIPPER DETAILS</div>
+                    <div class="section-block">
+                        <div class="section-title">3. Origin & Shipper Profile</div>
                         <table>
-                            <tr><td style="font-weight: bold; width: 35%;">Shipper Full Name:</td><td>${d.senderFullName || 'N/A'}</td></tr>
-                            <tr><td style="font-weight: bold;">Dispatch Address:</td><td>${d.senderAddress || 'N/A'}</td></tr>
-                            <tr><td style="font-weight: bold;">Current Location:</td><td>${d.senderCurrentLocation || 'N/A'}</td></tr>
-                            <tr><td style="font-weight: bold;">Passport ID:</td><td>${d.senderPassportId || 'N/A'}</td></tr>
-                            <tr><td style="font-weight: bold;">Sender SSN:</td><td>${d.senderSSN || 'N/A'}</td></tr>
+                            <tr><td class="lbl">Shipper Full Name:</td><td class="val">${d.senderFullName || 'N/A'}</td></tr>
+                            <tr><td class="lbl">Dispatch Address:</td><td class="val">${d.senderAddress || 'N/A'}</td></tr>
+                            <tr><td class="lbl">Current Location:</td><td class="val">${d.senderCurrentLocation || 'N/A'}</td></tr>
+                            <tr><td class="lbl">Passport ID:</td><td class="val">${d.senderPassportId || 'N/A'}</td></tr>
+                            <tr><td class="lbl">Sender SSN:</td><td class="val">${d.senderSSN || 'N/A'}</td></tr>
                         </table>
                     </div>
 
-                    <div style="margin-bottom: 20px;">
-                        <div class="section-title">4. CONSIGNEE / RECEIVER RECORDS</div>
+                    <div class="section-block">
+                        <div class="section-title">4. Consignee / Receiver Manifest</div>
                         <table>
-                            <tr><td style="font-weight: bold; width: 35%;">Receiver Full Name:</td><td>${d.receiverFullName || 'N/A'}</td></tr>
-                            <tr><td style="font-weight: bold;">Destination Country/State:</td><td>${d.countryOfDestination || 'N/A'} (${d.receiverState || 'N/A'})</td></tr>
-                            <tr><td style="font-weight: bold;">Delivery Address:</td><td>${d.receiverHouseAddress || 'N/A'}</td></tr>
-                            <tr><td style="font-weight: bold;">Email Address:</td><td>${d.receiverEmail || 'N/A'}</td></tr>
-                            <tr><td style="font-weight: bold;">Phone Number:</td><td>${d.receiverPhone || 'N/A'}</td></tr>
-                            <tr><td style="font-weight: bold;">Social Contact:</td><td>${d.receiverSocialPhone || 'N/A'}</td></tr>
+                            <tr><td class="lbl">Receiver Full Name:</td><td class="val">${d.receiverFullName || 'N/A'}</td></tr>
+                            <tr><td class="lbl">Destination Region:</td><td class="val">${d.countryOfDestination || 'N/A'} (${d.receiverState || 'N/A'})</td></tr>
+                            <tr><td class="lbl">Delivery Address:</td><td class="val">${d.receiverHouseAddress || 'N/A'}</td></tr>
+                            <tr><td class="lbl">Email Address:</td><td class="val">${d.receiverEmail || 'N/A'}</td></tr>
+                            <tr><td class="lbl">Phone Contact:</td><td class="val">${d.receiverPhone || 'N/A'}</td></tr>
+                            <tr><td class="lbl">Social Contact:</td><td class="val">${d.receiverSocialPhone || 'N/A'}</td></tr>
                         </table>
                     </div>
 
-                    <div style="margin-bottom: 20px;">
-                        <div class="section-title">5. FINANCIAL STATEMENT</div>
-                        <table>
-                            <tr style="border-bottom: 1px solid #eee;"><td style="font-weight: bold;">Declared Value:</td><td style="text-align: right;">${d.totalCostOfPackage || '$0.00'}</td></tr>
-                            <tr style="border-bottom: 1px solid #eee;"><td style="font-weight: bold;">Base Freight Fee:</td><td style="text-align: right;">Included</td></tr>
-                            <tr style="border-bottom: 1px solid #eee;"><td style="font-weight: bold;">Customs Inspection Fee:</td><td style="text-align: right;">${d.customClearanceFee || '$0.00'}</td></tr>
-                            <tr><td style="font-weight: bold; font-size: 13px; padding-top: 10px;">Total Payable:</td><td style="text-align: right; font-weight: bold; font-size: 13px; color: #0088CC; padding-top: 10px;">${d.totalCostOfPackage || '$0.00'}</td></tr>
+                    <div class="section-block">
+                        <div class="section-title">5. Financial Clearance Breakdown</div>
+                        <table class="fin-table">
+                            <tr><td class="lbl">Declared Item Value:</td><td class="val" style="text-align: right;">${d.totalCostOfPackage || '$0.00'}</td></tr>
+                            <tr><td class="lbl">Base Freight Charges:</td><td class="val" style="text-align: right;">Paid / Included</td></tr>
+                            <tr><td class="lbl">Customs Duty Fee:</td><td class="val" style="text-align: right;">${d.customClearanceFee || '$0.00'}</td></tr>
+                            <tr class="total-row"><td class="lbl" style="color:#0f172a;">Total Payable Amount:</td><td style="text-align: right; color:#0284c7;">${d.totalCostOfPackage || '$0.00'}</td></tr>
                         </table>
                     </div>
 
-                    <table style="width: 100%; margin-top: 25px; border-top: 2px dashed #bbb; padding-top: 15px;">
-                        <tr>
-                            <td style="vertical-align: middle;">
-                                <div style="border: 3px double #0033aa; width: 120px; height: 120px; border-radius: 50%; text-align: center; color: #0033aa; transform: rotate(-8deg); padding: 5px; box-sizing: border-box;">
-                                    <div style="font-size: 8px; font-weight: bold; margin-top: 8px;">SWIFTORA XPRESS</div>
-                                    <div style="font-size: 12px; margin: 2px 0;">★ ★ ★</div>
-                                    <div style="font-size: 9px; font-weight: bold; border-top: 1px solid #0033aa; border-bottom: 1px solid #0033aa; padding: 2px 0;">VERIFIED & PAID</div>
-                                    <div style="font-size: 7px; margin-top: 3px;">CLEARANCE DEPT</div>
-                                </div>
-                            </td>
-                            <td style="text-align: right; vertical-align: bottom;">
-                                <div style="font-family: 'Great Vibes', 'Brush Script MT', cursive; font-size: 30px; color: #001f54; margin-bottom: -5px;">
-                                    S. E. Vance
-                                </div>
-                                <div style="border-top: 1px solid #333; display: inline-block; width: 180px; padding-top: 3px; font-size: 11px; font-weight: bold; color: #111;">
-                                    Authorized Officer
-                                </div>
-                                <div style="font-size: 9px; color: #555; margin-top: 2px;">
-                                    Swiftora Logistics Dispatch Operations
-                                </div>
-                            </td>
-                        </tr>
-                    </table>
+                    <div class="footer-signatures">
+                        <div class="official-stamp">
+                            <div class="stamp-top">SWIFTORA XPRESS</div>
+                            <div class="stamp-stars">★ ★ ★</div>
+                            <div class="stamp-mid">VERIFIED & PAID</div>
+                            <div class="stamp-bot">CLEARANCE DEPT</div>
+                        </div>
 
-                    <div class="footer">
-                        Verified Digital Waybill Manifest &bull; Swiftora Xpress Logistics &bull; Issued: ${new Date().toLocaleString()}
+                        <div class="signature-box">
+                            <div class="sig-script">S. E. Vance</div>
+                            <div class="sig-line">Authorized Officer</div>
+                            <div class="sig-sub">Swiftora Logistics Dispatch Operations</div>
+                        </div>
+                    </div>
+
+                    <div class="receipt-footer-note">
+                        Official Terminal Receipt &bull; Swiftora Xpress Logistics Gateway &bull; Issued: ${new Date().toLocaleString()}
                     </div>
                 </div>
             </body>
