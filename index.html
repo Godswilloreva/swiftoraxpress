@@ -131,7 +131,6 @@
             text-decoration: none;
         }
 
-        /* User Custom Logo Asset */
         .header-logo-img {
             height: 42px;
             width: auto;
@@ -184,7 +183,6 @@
             overflow: hidden;
         }
 
-        /* Non-stop HTML5 Video Element */
         .hero-video-bg {
             position: absolute;
             top: 50%;
@@ -198,7 +196,6 @@
             object-fit: cover;
         }
 
-        /* Dark Overlay for Video Visibility */
         .hero-video-overlay {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -261,7 +258,6 @@
             max-width: 520px;
         }
 
-        /* Tracking Card & company.png insertion */
         .terminal-box {
             background: rgba(14, 19, 34, 0.92);
             backdrop-filter: blur(20px);
@@ -318,16 +314,6 @@
             text-transform: uppercase;
         }
 
-        .company-badge-img {
-            width: 100%;
-            height: auto;
-            max-height: 80px;
-            object-fit: contain;
-            margin-top: 20px;
-            border-top: 1px solid var(--border-subtle);
-            padding-top: 16px;
-        }
-
         .error-alert {
             color: #F87171;
             font-size: 0.85rem;
@@ -337,12 +323,33 @@
         }
 
         /* ==========================================
-           4. Country Marquee Slider Animation
+           4. Prominent Company Showcase Banner
+           ========================================== */
+        .company-hero-banner {
+            max-width: 1300px;
+            margin: 60px auto 0 auto;
+            padding: 0 4%;
+            text-align: center;
+        }
+
+        .company-banner-img {
+            width: 100%;
+            height: auto;
+            max-height: 480px;
+            object-fit: cover;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-subtle);
+            box-shadow: var(--shadow-card);
+        }
+
+        /* ==========================================
+           5. Country Marquee Slider Animation
            ========================================== */
         .country-slider-section {
             background: var(--bg-surface);
             border-y: 1px solid var(--border-subtle);
             padding: 24px 0;
+            margin-top: 80px;
             overflow: hidden;
             position: relative;
         }
@@ -390,7 +397,7 @@
         }
 
         /* ==========================================
-           5. Rates Matrix & delivery.png Integration
+           6. Rates Matrix & delivery.png Integration
            ========================================== */
         .section-container {
             max-width: 1300px;
@@ -449,7 +456,7 @@
         }
 
         /* ==========================================
-           6. Satisfaction & happy.png Integration
+           7. Satisfaction & happy.png Integration
            ========================================== */
         .happy-trust-wrapper {
             background: var(--bg-surface);
@@ -472,7 +479,7 @@
         }
 
         /* ==========================================
-           7. Dual Floating Action Hub
+           8. Dual Floating Action Hub
            ========================================== */
         .floating-hub {
             position: fixed;
@@ -540,7 +547,7 @@
         }
 
         /* ==========================================
-           8. Command HQ Footer
+           9. Command HQ Footer
            ========================================== */
         footer {
             background: #03060D;
@@ -643,10 +650,12 @@
                     <button class="btn-track" id="trackSubmitBtn">Track Package</button>
                 </div>
                 <p class="error-alert" id="errorMsg">Invalid Tracking ID. Please enter an authorized tracking code.</p>
-
-                <img src="company.png" alt="Swiftora Certified Logistics" class="company-badge-img">
             </div>
         </div>
+    </section>
+
+    <section class="company-hero-banner" id="company">
+        <img src="company.png" alt="Swiftora Certified Logistics" class="company-banner-img">
     </section>
 
     <section class="country-slider-section" id="destinations">
@@ -703,7 +712,7 @@
                         </tr>
                     </thead>
                     <tbody id="ratesTableBody">
-                        </tbody>
+                    </tbody>
                 </table>
             </div>
 
