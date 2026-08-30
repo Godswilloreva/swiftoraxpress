@@ -82,7 +82,6 @@
             padding-bottom: 80px;
         }
 
-        /* Glass Header */
         header {
             position: sticky;
             top: 0;
@@ -128,7 +127,6 @@
             color: var(--brand-primary);
         }
 
-        /* Layout Grid */
         .container {
             max-width: 1200px;
             margin: 40px auto 0 auto;
@@ -157,9 +155,6 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            background: rgba(239, 68, 68, 0.12);
-            border: 1px solid rgba(239, 68, 68, 0.4);
-            color: var(--danger);
             padding: 6px 16px;
             border-radius: 30px;
             font-size: 0.82rem;
@@ -169,14 +164,27 @@
             margin-bottom: 16px;
         }
 
-        .pulse-red {
+        .status-badge.hold {
+            background: rgba(239, 68, 68, 0.12);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            color: var(--danger);
+        }
+
+        .status-badge.transit {
+            background: rgba(0, 240, 255, 0.12);
+            border: 1px solid rgba(0, 240, 255, 0.4);
+            color: var(--brand-primary);
+        }
+
+        .pulse-dot {
             width: 8px;
             height: 8px;
-            background: var(--danger);
             border-radius: 50%;
-            box-shadow: 0 0 10px var(--danger);
             animation: pulseAnim 1.5s infinite;
         }
+
+        .pulse-red { background: var(--danger); box-shadow: 0 0 10px var(--danger); }
+        .pulse-blue { background: var(--brand-primary); box-shadow: 0 0 10px var(--brand-primary); }
 
         @keyframes pulseAnim {
             0% { opacity: 1; transform: scale(1); }
@@ -210,13 +218,11 @@
             gap: 10px;
         }
 
-        .card h3 i {
-            color: var(--brand-primary);
-        }
+        .card h3 i { color: var(--brand-primary); }
 
         .info-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
             gap: 20px;
         }
 
@@ -237,7 +243,7 @@
             word-break: break-word;
         }
 
-        /* Custom Timeline System */
+        /* Dynamic Timeline System */
         .timeline-container {
             position: relative;
             padding-left: 20px;
@@ -260,9 +266,7 @@
             padding-bottom: 28px;
         }
 
-        .timeline-step:last-child {
-            padding-bottom: 0;
-        }
+        .timeline-step:last-child { padding-bottom: 0; }
 
         .node-icon {
             width: 24px;
@@ -285,6 +289,14 @@
             color: #000;
         }
 
+        .timeline-step.active-transit .node-icon {
+            background: var(--brand-primary);
+            border-color: var(--brand-primary);
+            color: #000;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.6);
+            animation: pulseAnim 1.2s infinite;
+        }
+
         .timeline-step.active-hold .node-icon {
             background: var(--danger);
             border-color: var(--danger);
@@ -305,7 +317,7 @@
             margin-top: 2px;
         }
 
-        .node-details .tag-status {
+        .tag-status {
             display: inline-block;
             font-size: 0.7rem;
             font-weight: 800;
@@ -315,17 +327,35 @@
             margin-top: 6px;
         }
 
-        .tag-completed {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--success);
+        .tag-completed { background: rgba(16, 185, 129, 0.1); color: var(--success); }
+        .tag-transit { background: rgba(0, 240, 255, 0.15); color: var(--brand-primary); }
+        .tag-hold { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+
+        /* Receipt Invoice Box */
+        .receipt-card {
+            background: var(--bg-card);
+            border: 1px dashed var(--border-accent);
+            border-radius: var(--radius-md);
+            padding: 24px;
+            margin-top: 20px;
         }
 
-        .tag-hold {
-            background: rgba(239, 68, 68, 0.15);
-            color: var(--danger);
+        .receipt-line {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px dashed var(--border-subtle);
+            font-size: 0.9rem;
         }
 
-        /* Action Alert Box */
+        .receipt-line.total {
+            border-bottom: none;
+            padding-top: 14px;
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--text-heading);
+        }
+
         .customs-alert-card {
             background: rgba(239, 68, 68, 0.05);
             border: 1px solid rgba(239, 68, 68, 0.3);
@@ -350,22 +380,7 @@
             flex-shrink: 0;
         }
 
-        .alert-body h4 {
-            color: var(--danger);
-            font-size: 1.05rem;
-            margin-bottom: 6px;
-        }
-
-        .alert-body p {
-            font-size: 0.88rem;
-            color: var(--text-body);
-        }
-
-        .fee-tag {
-            color: var(--danger);
-            font-weight: 800;
-            font-size: 1.1rem;
-        }
+        .fee-tag { color: var(--danger); font-weight: 800; font-size: 1.1rem; }
 
         @media(max-width: 900px) {
             .dashboard-grid { grid-template-columns: 1fr; }
@@ -384,12 +399,12 @@
     <div class="container">
         <div class="tracking-header-card">
             <div class="status-badge" id="statusBadge">
-                <span class="pulse-red"></span> Action Required: Clearance Pending
+                <span class="pulse-dot pulse-blue"></span> Syncing Live Telemetry...
             </div>
             <h1 style="color: var(--text-heading); font-size: 2rem; margin-bottom: 6px;">
                 Waypoint ID: <span id="displayTrackingId" style="color: var(--brand-primary);">--</span>
             </h1>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">
+            <p style="color: var(--text-muted); font-size: 0.9rem;" id="carrierInfo">
                 Consignment Telemetry Feed & Gateway Status
             </p>
         </div>
@@ -419,39 +434,77 @@
                 </div>
 
                 <div class="card">
-                    <h3><i class="fa-solid fa-plane-departure"></i> Origin & Waypoint Manifest</h3>
+                    <h3><i class="fa-solid fa-plane-departure"></i> Origin & Shipper Manifest</h3>
                     <div class="info-grid" style="margin-bottom: 24px;">
                         <div class="info-group">
-                            <label>Shipper/Entity</label>
+                            <label>Shipper Name</label>
                             <span id="sName">--</span>
                         </div>
                         <div class="info-group">
-                            <label>Dispatch Hub</label>
+                            <label>Dispatch Address</label>
                             <span id="sAddr">--</span>
                         </div>
                         <div class="info-group">
-                            <label>Origin Contact</label>
-                            <span id="sPhone">--</span>
+                            <label>Current Location</label>
+                            <span id="sLoc">--</span>
+                        </div>
+                        <div class="info-group">
+                            <label>Passport ID</label>
+                            <span id="sPassport">--</span>
+                        </div>
+                        <div class="info-group">
+                            <label>Sender SSN</label>
+                            <span id="sSSN">--</span>
                         </div>
                     </div>
 
-                    <h3 style="margin-top: 30px;"><i class="fa-solid fa-plane-arrival"></i> Receiver Terminal</h3>
+                    <h3 style="margin-top: 30px;"><i class="fa-solid fa-plane-arrival"></i> Consignee / Receiver Terminal</h3>
                     <div class="info-grid">
                         <div class="info-group">
-                            <label>Consignee Name</label>
+                            <label>Receiver Name</label>
                             <span id="rName">--</span>
                         </div>
                         <div class="info-group">
-                            <label>Destination Gateway</label>
-                            <span id="rCountry">--</span>
+                            <label>Destination Country / State</label>
+                            <span id="rCountryState">--</span>
                         </div>
                         <div class="info-group">
-                            <label>Delivery Address</label>
+                            <label>Delivery House Address</label>
                             <span id="rAddr">--</span>
                         </div>
                         <div class="info-group">
-                            <label>Consignee Channel</label>
-                            <span id="rContact">--</span>
+                            <label>Receiver Email</label>
+                            <span id="rEmail">--</span>
+                        </div>
+                        <div class="info-group">
+                            <label>Direct Contact</label>
+                            <span id="rPhone">--</span>
+                        </div>
+                        <div class="info-group">
+                            <label>Social Phone</label>
+                            <span id="rSocialPhone">--</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3><i class="fa-solid fa-file-invoice-dollar"></i> Freight & Customs Receipt</h3>
+                    <div class="receipt-card">
+                        <div class="receipt-line">
+                            <span>Declared Package Value</span>
+                            <span id="rcptValue">$0.00</span>
+                        </div>
+                        <div class="receipt-line">
+                            <span>Base Freight Fee</span>
+                            <span>Included</span>
+                        </div>
+                        <div class="receipt-line">
+                            <span>Customs Inspection Fee</span>
+                            <span id="rcptCustomsFee">$0.00</span>
+                        </div>
+                        <div class="receipt-line total">
+                            <span>Total Declared Payable</span>
+                            <span id="rcptTotalCost" style="color:var(--brand-primary);">$0.00</span>
                         </div>
                     </div>
                 </div>
@@ -468,8 +521,8 @@
                             <i class="fa-solid fa-triangle-exclamation"></i>
                         </div>
                         <div class="alert-body">
-                            <h4>Customs Hold Inspection</h4>
-                            <p>An outstanding fee of <span class="fee-tag" id="customsFeeAmount">$0.00</span> is required to pass international inspection and unlock local dispatch.</p>
+                            <h4 style="color:var(--danger); font-size:1.05rem; margin-bottom:6px;">Customs Inspection Hold</h4>
+                            <p style="font-size:0.88rem;">An outstanding clearance fee of <span class="fee-tag" id="customsFeeAmount">$0.00</span> is required to pass airport clearance and release package for door delivery.</p>
                         </div>
                     </div>
                 </div>
@@ -477,75 +530,166 @@
         </div>
     </div>
 
-    <script>
-        const stages = [
-            "Order Received & Processed at Facility",
-            "Dispatched to Departure Port",
-            "Outbound Customs Check Passed",
-            "Departed Origin Airport / Hub",
-            "In International Transit Flight",
-            "Arrived at Destination Hub Country",
-            "Sorting & Scanning Completed",
-            "Transfer to Local Regional Facility",
-            "Out for Final Doorstep Delivery",
-            "Customs Hold Clearance Fee Pending"
-        ];
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        window.onload = function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const trackId = urlParams.get('id');
-            document.getElementById('displayTrackingId').innerText = trackId || "SWFT-UNVERIFIED";
-
-            const data = JSON.parse(localStorage.getItem('swiftora_' + trackId));
-
-            if (data) {
-                document.getElementById('sName').innerText = data.senderName || "--";
-                document.getElementById('sAddr').innerText = data.senderAddr || "--";
-                document.getElementById('sPhone').innerText = data.senderPhone || "--";
-                
-                document.getElementById('rName').innerText = `${data.recName} (${data.recGender})`;
-                document.getElementById('rAddr').innerText = data.recAddr || "--";
-                document.getElementById('rCountry').innerText = data.recCountry || "--";
-                document.getElementById('rContact').innerText = `${data.recEmail} | ${data.recPhone}`;
-                
-                document.getElementById('pkgDesc').innerText = data.pkgDetails || "--";
-                document.getElementById('pkgWeight').innerText = data.pkgWeight ? (data.pkgWeight + " kg") : "--";
-                document.getElementById('dispatchDate').innerText = data.sendDate || "--";
-                document.getElementById('etaDate').innerText = data.arrivalDate || "--";
-
-                renderTimeline(data.customsFee);
-            } else {
-                renderTimeline("0");
-            }
+        const firebaseConfig = {
+            apiKey: "AIzaSyBMn0Gf5Eyyy1CHF2zloLGL2kh0zsQ83vo",
+            authDomain: "swiftora-1fe3d.firebaseapp.com",
+            projectId: "swiftora-1fe3d",
+            storageBucket: "swiftora-1fe3d.firebasestorage.app",
+            messagingSenderId: "93504371995",
+            appId: "1:93504371995:web:84665487d19c67bdea27be"
         };
 
-        function renderTimeline(customsFee) {
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const trackId = urlParams.get('id');
+            const displayIdEl = document.getElementById('displayTrackingId');
+
+            if (!trackId) {
+                displayIdEl.innerText = "NO-TRACKING-ID";
+                return;
+            }
+
+            displayIdEl.innerText = trackId;
+
+            try {
+                const docRef = doc(db, "shipments", trackId);
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    populateDetails(data);
+                    calculateAndRenderTimeline(data);
+                } else {
+                    displayIdEl.innerText = `${trackId} (Not Found)`;
+                }
+            } catch (err) {
+                console.error("Firestore error:", err);
+            }
+        });
+
+        function populateDetails(data) {
+            // Carrier
+            if (data.deliveryCompanyName) {
+                document.getElementById('carrierInfo').innerText = `${data.deliveryCompanyName} | ${data.deliveryCompanyAddress || ''} | ${data.deliveryCompanyPhone || ''}`;
+            }
+
+            // Sender
+            document.getElementById('sName').innerText = data.senderFullName || "--";
+            document.getElementById('sAddr').innerText = data.senderAddress || "--";
+            document.getElementById('sLoc').innerText = data.senderCurrentLocation || "--";
+            document.getElementById('sPassport').innerText = data.senderPassportId || "--";
+            document.getElementById('sSSN').innerText = data.senderSSN || "N/A";
+
+            // Receiver
+            document.getElementById('rName').innerText = data.receiverFullName || "--";
+            document.getElementById('rCountryState').innerText = `${data.countryOfDestination || '--'} (${data.receiverState || '--'})`;
+            document.getElementById('rAddr').innerText = data.receiverHouseAddress || "--";
+            document.getElementById('rEmail').innerText = data.receiverEmail || "--";
+            document.getElementById('rPhone').innerText = data.receiverPhone || "--";
+            document.getElementById('rSocialPhone').innerText = data.receiverSocialPhone || "--";
+
+            // Package
+            document.getElementById('pkgDesc').innerText = data.packageName || "--";
+            document.getElementById('pkgWeight').innerText = data.packageWeight || "--";
+            document.getElementById('dispatchDate').innerText = data.dateOfSent ? new Date(data.dateOfSent).toLocaleString() : "--";
+            document.getElementById('etaDate').innerText = data.dateToBeReceived ? new Date(data.dateToBeReceived).toLocaleString() : "--";
+
+            // Financials / Receipt
+            document.getElementById('rcptValue').innerText = data.totalCostOfPackage || "$0.00";
+            document.getElementById('rcptCustomsFee').innerText = data.customClearanceFee || "$0.00";
+            document.getElementById('rcptTotalCost').innerText = data.totalCostOfPackage || "$0.00";
+        }
+
+        function calculateAndRenderTimeline(data) {
+            const sendTime = data.dateOfSent ? new Date(data.dateOfSent).getTime() : Date.now();
+            const now = Date.now();
+            const elapsedMinutes = Math.floor((now - sendTime) / (1000 * 60));
+
+            const isCustomHold = data.customHold === true || data.customHold === "true";
+            const arrivedDestination = data.arrivedAtDestination === true || data.arrivedAtDestination === "true";
+            const customsFee = data.customClearanceFee || "$0.00";
+
+            /* Timeline Pipeline definitions */
+            const pipeline = [
+                { name: "Picked by Courier", delay: 0, icon: "fa-box" },
+                { name: "Picked & Ready for Shipping", delay: 10, icon: "fa-dolly" },
+                { name: "Package Left Country of Origin", delay: 30, icon: "fa-plane-departure" },
+                { name: `In Flight Transit to ${data.countryOfDestination || 'Destination'} ✈️`, delay: 120, icon: "fa-plane" },
+                { name: `Arrived at Country of Destination (${data.countryOfDestination || 'Hub'})`, delay: 1440, forceTrigger: arrivedDestination, icon: "fa-plane-arrival" },
+                { name: "Customs Hold Inspection", delay: 1500, forceTrigger: isCustomHold, icon: "fa-shield-cat" },
+                { name: "Customs Clearance Fee Active", delay: 1520, forceTrigger: isCustomHold, icon: "fa-triangle-exclamation" }
+            ];
+
             const container = document.getElementById('timeline');
+            const statusBadge = document.getElementById('statusBadge');
             container.innerHTML = "";
 
-            stages.forEach((stageName, idx) => {
-                const isLast = idx === 9;
+            let currentActiveIndex = 0;
+
+            pipeline.forEach((step, idx) => {
+                let isCompleted = false;
+                let isActive = false;
+
+                if (step.forceTrigger || elapsedMinutes >= step.delay) {
+                    currentActiveIndex = idx;
+                }
+            });
+
+            pipeline.forEach((step, idx) => {
                 const stepEl = document.createElement('div');
-                stepEl.className = `timeline-step ${isLast ? 'active-hold' : 'completed'}`;
-                
+                const isCompleted = idx < currentActiveIndex;
+                const isActive = idx === currentActiveIndex;
+                const isHoldStep = (step.name.includes("Customs Hold") || step.name.includes("Clearance Fee")) && isCustomHold;
+
+                let stateClass = "";
+                let tagMarkup = "";
+
+                if (isCompleted) {
+                    stateClass = "completed";
+                    tagMarkup = `<span class="tag-status tag-completed">Completed</span>`;
+                } else if (isActive) {
+                    if (isHoldStep) {
+                        stateClass = "active-hold";
+                        tagMarkup = `<span class="tag-status tag-hold">Hold Active - Action Required</span>`;
+                    } else {
+                        stateClass = "active-transit";
+                        tagMarkup = `<span class="tag-status tag-transit">In Progress ✈️</span>`;
+                    }
+                } else {
+                    tagMarkup = `<span class="tag-status" style="background:var(--bg-card); color:var(--text-muted);">Pending</span>`;
+                }
+
+                stepEl.className = `timeline-step ${stateClass}`;
                 stepEl.innerHTML = `
                     <div class="node-icon">
-                        ${isLast ? '<i class="fa-solid fa-shield-cat"></i>' : '<i class="fa-solid fa-check"></i>'}
+                        <i class="fa-solid ${isCompleted ? 'fa-check' : (isActive && isHoldStep ? 'fa-triangle-exclamation' : step.icon)}"></i>
                     </div>
                     <div class="node-details">
-                        <h4>${stageName}</h4>
-                        <p>${isLast ? 'Waypoint Flag: Immediate Clearance Action Required' : 'Completed Hub Check'}</p>
-                        <span class="tag-status ${isLast ? 'tag-hold' : 'tag-completed'}">
-                            ${isLast ? 'Hold Active' : 'Cleared'}
-                        </span>
+                        <h4>${step.name}</h4>
+                        <p>${isActive ? 'Active Real-Time Waypoint Status' : (isCompleted ? 'Passed Telemetry Point' : 'Awaiting Aircraft Vector')}</p>
+                        ${tagMarkup}
                     </div>
                 `;
                 container.appendChild(stepEl);
             });
 
-            if(customsFee) {
+            // Update top header status badge & Customs alert block
+            if (isCustomHold && currentActiveIndex >= 5) {
+                statusBadge.className = "status-badge hold";
+                statusBadge.innerHTML = `<span class="pulse-dot pulse-red"></span> Action Required: Customs Clearance Pending`;
                 document.getElementById('customsAlert').style.display = 'flex';
                 document.getElementById('customsFeeAmount').innerText = customsFee;
+            } else {
+                statusBadge.className = "status-badge transit";
+                statusBadge.innerHTML = `<span class="pulse-dot pulse-blue"></span> Active Flight Transit In Progress`;
+                document.getElementById('customsAlert').style.display = 'none';
             }
         }
     </script>
