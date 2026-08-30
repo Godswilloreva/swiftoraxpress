@@ -1,0 +1,24 @@
+Category	Firestore Field Key	Data Type	Example Value
+Delivery Company	deliveryCompanyName	string	Swiftora Xpress Logistics Inc.
+	deliveryCompanyAddress	string	Cargo Terminal Gate 4, JFK Int Airport, NY
+	deliveryCompanyPhone	string	+1 (800) 555-SWIFT
+Sender Info	senderFullName	string	Johnathan Hayes
+	senderAddress	string	1024 Airport Way, Los Angeles, CA
+	senderPassportId	string	P-84019284
+	senderCurrentLocation	string	Los Angeles, USA
+	senderSSN	string	XXX-XX-4920
+Receiver Info	receiverFullName	string	Alice Smith
+	receiverHouseAddress	string	45 Ocean Drive, Victoria Island
+	receiverPhone	string	+234 801 234 5678
+	receiverEmail	string	alicesmith@gmail.com
+	receiverState	string	Lagos State
+	receiverSocialPhone	string	+234 801 234 5678
+Package Info	packageName	string	Sealed Electronics & Corporate Documents
+	packageWeight	string	12.5 kg
+	customHold	boolean	TRUE
+	customClearanceFee	string	$450.00
+	dateOfSent	string (ISO date/time)	2026-08-30 08:00:00
+	dateToBeReceived	string (ISO date/time)	2026-08-31 08:00:00
+	totalCostOfPackage	string	$2,850.00
+Destination	countryOfDestination	string	Nigeria
+	arrivedAtDestination	boolean	TRUE
