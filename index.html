@@ -109,14 +109,14 @@
         }
 
         /* ==========================================
-           2. Floating Glass Header (With Logo)
+           2. Floating Glass Header (With Mobile Support)
            ========================================== */
         header {
             position: fixed;
             top: 15px;
             left: 4%;
             right: 4%;
-            background: rgba(14, 19, 34, 0.88);
+            background: rgba(14, 19, 34, 0.95);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--border-subtle);
@@ -130,7 +130,7 @@
         }
 
         [data-theme="light"] header {
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.95);
         }
 
         .logo-container {
@@ -157,6 +157,7 @@
             text-decoration: none;
             font-weight: 600;
             font-size: 0.9rem;
+            white-space: nowrap;
         }
 
         .nav-links a:hover {
@@ -183,6 +184,44 @@
         .btn-theme:hover {
             border-color: var(--brand-primary);
             color: var(--brand-primary);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-heading);
+            padding: 8px 12px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 1.1rem;
+        }
+
+        /* Mobile Drawer / Overlay Navigation */
+        @media (max-width: 992px) {
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: var(--bg-surface);
+                border: 1px solid var(--border-subtle);
+                border-radius: var(--radius-md);
+                padding: 20px;
+                margin-top: 10px;
+                gap: 16px;
+                box-shadow: var(--shadow-card);
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
         }
 
         /* ==========================================
@@ -361,7 +400,8 @@
            ========================================== */
         .country-slider-section {
             background: var(--bg-surface);
-            border-y: 1px solid var(--border-subtle);
+            border-top: 1px solid var(--border-subtle);
+            border-bottom: 1px solid var(--border-subtle);
             padding: 24px 0;
             margin-top: 80px;
             overflow: hidden;
@@ -608,7 +648,6 @@
             .hero-layout { grid-template-columns: 1fr; }
             .happy-trust-wrapper { grid-template-columns: 1fr; }
             .footer-grid { grid-template-columns: 1fr 1fr; }
-            .nav-links { display: none; }
         }
 
         @media (max-width: 600px) {
@@ -627,7 +666,7 @@
             <img src="swiftoralogo.png" alt="Swiftora Xpress Logo" class="header-logo-img">
         </a>
 
-        <ul class="nav-links">
+        <ul class="nav-links" id="navLinks">
             <li><a href="destination.html">Destination Rates</a></li>
             <li><a href="global.html">Global Hubs</a></li>
             <li><a href="index.html">Tracking Portal</a></li>
@@ -637,6 +676,9 @@
         <div class="header-controls">
             <div id="google_translate_element"></div>
             <button class="btn-theme" id="themeBtn">Light Mode</button>
+            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle Navigation Menu">
+                <i class="fa-solid fa-bars"></i>
+            </button>
         </div>
     </header>
 
@@ -826,6 +868,14 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            /* Mobile Navigation Toggle */
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const navLinks = document.getElementById('navLinks');
+
+            mobileMenuBtn.addEventListener('click', () => {
+                navLinks.classList.toggle('active');
+            });
+
             /* Full List of Authorized Tracking IDs */
             const validIds = [
                 "SWFT-583214-HME-DELPAY", "SWFT-741906-HME-DELPAY", "SWFT-326581-HME-DELPAY", 
