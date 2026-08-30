@@ -450,7 +450,7 @@
         
         <div class="nav-actions">
             <div id="google_translate_element"></div>
-            <a href="index.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i> Return to Terminal</a>
+            <a href="index.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i> Return</a>
         </div>
     </header>
 
@@ -460,7 +460,7 @@
                 <span class="pulse-dot pulse-blue"></span> Syncing Live...
             </div>
             <h1 style="color: var(--text-heading); font-size: 2rem; margin-bottom: 6px;">
-                Waypoint ID: <span id="displayTrackingId" style="color: var(--brand-primary);">--</span>
+                RECEIVER VALID ID: <span id="displayTrackingId" style="color: var(--brand-primary);">--</span>
             </h1>
             <p style="color: var(--text-muted); font-size: 0.9rem;" id="carrierInfo">
                 Consignment Gateway Status
@@ -470,7 +470,7 @@
         <div class="dashboard-grid">
             <div>
                 <div class="card">
-                    <h3><i class="fa-solid fa-route"></i> Live Pipeline Telemetry</h3>
+                    <h3><i class="fa-solid fa-route"></i> Live</h3>
                     
                     <div class="timeline-container" id="timeline"></div>
 
@@ -781,7 +781,7 @@
             <html lang="en">
             <head>
                 <meta charset="UTF-8">
-                <title>Waybill Grid Receipt - ${currentTrackingId}</title>
+                <title>OFFICIAL VALID RECEIPT - ${currentTrackingId}</title>
                 <link rel="preconnect" href="https://fonts.googleapis.com">
                 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
                 <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Oswald:wght@600;700&family=Plus+Jakarta+Sans:wght@500;700;800;900&display=swap" rel="stylesheet">
@@ -1051,7 +1051,7 @@
             </head>
             <body>
                 <div class="action-bar">
-                    <span style="font-size: 14px; font-weight: 800; color: #ffffff; text-transform: uppercase;">Grid Document Mode</span>
+                    <span style="font-size: 14px; font-weight: 800; color: #ffffff; text-transform: uppercase;">VALID ID RECEIPT</span>
                     <button class="btn-print" onclick="window.print()">Print / Save as PDF</button>
                 </div>
 
@@ -1062,7 +1062,7 @@
                     <div class="grid-header">
                         <div class="header-brand">
                             <h1>SWIFTORA LOGISTICS</h1>
-                            <p>Official Freight Consignment Manifest</p>
+                            <p>Official Freight Consignment VALID</p>
                         </div>
                         <div class="header-id">
                             <span>WAYBILL ID</span>
@@ -1082,13 +1082,13 @@
                             <span class="g-val">${d.deliveryCompanyPhone || '+1 (800) SWIFTORA'}</span>
                         </div>
                         <div class="grid-cell-full">
-                            <span class="g-label">Hub Facility Address</span>
+                            <span class="g-label">Facility Address</span>
                             <span class="g-val">${d.deliveryCompanyAddress || 'Global Distribution Station'}</span>
                         </div>
                     </div>
 
                     <!-- PACKAGE SPECIFICATIONS GRID -->
-                    <div class="banner-title">2. Freight & Cargo Metadata</div>
+                    <div class="banner-title">2. Freight & Cargo</div>
                     <div class="grid-4col">
                         <div class="grid-cell">
                             <span class="g-label">Package Name</span>
@@ -1124,7 +1124,7 @@
                             <span class="g-val">${d.senderAddress || 'N/A'}</span>
                         </div>
                         <div class="grid-cell">
-                            <span class="g-label">Destination House Address</span>
+                            <span class="g-label">Receiver Destination House Address</span>
                             <span class="g-val">${d.receiverHouseAddress || 'N/A'}</span>
                         </div>
                         <div class="grid-cell">
@@ -1138,14 +1138,14 @@
                     </div>
 
                     <!-- FINANCIAL STATEMENT GRID -->
-                    <div class="banner-title">4. Financial Clearance Ledger</div>
+                    <div class="banner-title">4. Financial Clearance</div>
                     <div class="grid-4col">
                         <div class="grid-cell">
                             <span class="g-label">Declared Value</span>
                             <span class="g-val">${d.totalCostOfPackage || '$0.00'}</span>
                         </div>
                         <div class="grid-cell">
-                            <span class="g-label">Customs Duty Fee</span>
+                            <span class="g-label">Customs Fee</span>
                             <span class="g-val">${d.customClearanceFee || '$0.00'}</span>
                         </div>
                         <div class="grid-cell">
@@ -1163,13 +1163,13 @@
                         <div class="stamp-wrapper">
                             <div class="bold-stamp">
                                 <div class="stamp-top">SWIFTORA LOGISTICS</div>
-                                <div class="stamp-mid">VERIFIED & PAID</div>
-                                <div class="stamp-bot">CLEARANCE TERMINAL</div>
+                                <div class="stamp-mid">fFULLY VERIFIED & PAID</div>
+                                <div class="stamp-bot">CLEARANCE</div>
                             </div>
                         </div>
 
                         <div class="sig-container">
-                            <div class="sig-font">S. E. Vance</div>
+                            <div class="sig-font">S. E. Vance Brian</div>
                             <div class="sig-line">Authorized Dispatch Officer</div>
                             <div class="sig-sub">Swiftora Freight Operations Command</div>
                         </div>
