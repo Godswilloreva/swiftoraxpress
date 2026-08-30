@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Logistics Dashboard - Swiftora Xpress</title>
+    <style>
+        :root { --primary: #0a2540; --accent: #ff6b00; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background: #eef2f5; padding: 30px 10px; }
+        .admin-box {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        h2 { color: var(--primary); margin-bottom: 20px; text-align: center; }
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .full-width { grid-column: span 2; }
+        .field { display: flex; flex-direction: column; }
+        .field label { font-size: 0.85rem; font-weight: bold; margin-bottom: 5px; color: #444; }
+        .field input, .field select, .field textarea {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            outline: none;
+        }
+        .btn-submit {
+            margin-top: 20px;
+            width: 100%;
+            padding: 12px;
+            background: var(--primary);
+            color: white;
+            font-size: 1rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .btn-submit:hover { background: var(--accent); }
+    </style>
+</head>
+<body>
+
+<div class="admin-box">
+    <h2>Swiftora Shipment Data Entry</h2>
+    <form id="adminForm" class="form-grid">
+        <div class="field full-width">
+            <label>Select Tracking ID</label>
+            <select id="trackingIdSelect" required></select>
+        </div>
+
+        <div class="field"><label>Sender Name</label><input type="text" id="senderName" required></div>
+        <div class="field"><label>Sender Phone</label><input type="text" id="senderPhone" required></div>
+        <div class="field full-width"><label>Sender Full Address</label><input type="text" id="senderAddr" required></div>
+
+        <div class="field"><label>Receiver Full Name</label><input type="text" id="recName" required></div>
+        <div class="field"><label>Receiver Gender</label>
+            <select id="recGender"><option>Male</option><option>Female</option></select>
+        </div>
+        <div class="field"><label>Receiver Email</label><input type="email" id="recEmail" required></div>
+        <div class="field"><label>Receiver Phone Number</label><input type="text" id="recPhone" required></div>
+        <div class="field"><label>Destination Country</label><input type="text" id="recCountry" required></div>
+        <div class="field full-width"><label>Receiver House Address</label><input type="text" id="recAddr" required></div>
+
+        <div class="field full-width"><label>Package Details</label><textarea id="pkgDetails" rows="2" required></textarea></div>
+        <div class="field"><label>Package Weight (kg)</label><input type="text" id="pkgWeight" required></div>
+        <div class="field"><label>Custom Hold Clearance Fee ($)</label><input type="text" id="customsFee" required></div>
+        <div class="field"><label>Dispatched Date</label><input type="date" id="sendDate" required></div>
+        <div class="field"><label>Expected Arrival Date</label><input type="date" id="arrivalDate" required></div>
+
+        <button type="submit" class="btn-submit full-width">Save & Update Shipment Track</button>
+    </form>
+</div>
+
+<script>
+    const validIds = [
+        "SWFT-583214-HME-DELPAY", "SWFT-741906-HME-DELPAY", "SWFT-326581-HME-DELPAY", 
+        "SWFT-905437-HME-DELPAY", "SWFT-218763-HME-DELPAY", "SWFT-674129-HME-DELPAY", 
+        "SWFT-450872-HME-DELPAY", "SWFT-813645-HME-DELPAY", "SWFT-392704-HME-DELPAY", 
+        "SWFT-167538-HME-DELPAY", "SWFT-729451-HME-DELPAY", "SWFT-584306-HME-DELPAY", 
+        "SWFT-936172-HME-DELPAY", "SWFT-251849-HME-DELPAY", "SWFT-608735-HME-DELPAY", 
+        "SWFT-473920-HME-DELPAY", "SWFT-815267-HME-DELPAY", "SWFT-349681-HME-DELPAY", 
+        "SWFT-762503-HME-DELPAY", "SWFT-194826-HME-DELPAY", "SWFT-537410-HME-DELPAY", 
+        "SWFT-680295-HME-DELPAY", "SWFT-421738-HME-DELPAY", "SWFT-853604-HME-DELPAY", 
+        "SWFT-276915-HME-DELPAY", "SWFT-914682-HME-DELPAY", "SWFT-365207-HME-DELPAY", 
+        "SWFT-748319-HME-DELPAY", "SWFT-502764-HME-DELPAY", "SWFT-189435-HME-DELPAY", 
+        "SWFT-637821-HME-DELPAY", "SWFT-824506-HME-DELPAY", "SWFT-293617-HME-DELPAY", 
+        "SWFT-571948-HME-DELPAY", "SWFT-406283-HME-DELPAY", "SWFT-957314-HME-DELPAY", 
+        "SWFT-138692-HME-DELPAY", "SWFT-695427-HME-DELPAY", "SWFT-347815-HME-DELPAY", 
+        "SWFT-782164-HME-DELPAY", "SWFT-519603-HME-DELPAY", "SWFT-264738-HME-DELPAY", 
+        "SWFT-871529-HME-DELPAY", "SWFT-430186-HME-DELPAY", "SWFT-756942-HME-DELPAY", 
+        "SWFT-315807-HME-DELPAY", "SWFT-683251-HME-DELPAY", "SWFT-927463-HME-DELPAY", 
+        "SWFT-548170-HME-DELPAY", "SWFT-201936-HME-DELPAY"
+    ];
+
+    const select = document.getElementById('trackingIdSelect');
+    validIds.forEach(id => {
+        let opt = document.createElement('option');
+        opt.value = id;
+        opt.innerHTML = id;
+        select.appendChild(opt);
+    });
+
+    document.getElementById('adminForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const selectedId = select.value;
+        const payload = {
+            senderName: document.getElementById('senderName').value,
+            senderPhone: document.getElementById('senderPhone').value,
+            senderAddr: document.getElementById('senderAddr').value,
+            recName: document.getElementById('recName').value,
+            recGender: document.getElementById('recGender').value,
+            recEmail: document.getElementById('recEmail').value,
+            recPhone: document.getElementById('recPhone').value,
+            recCountry: document.getElementById('recCountry').value,
+            recAddr: document.getElementById('recAddr').value,
+            pkgDetails: document.getElementById('pkgDetails').value,
+            pkgWeight: document.getElementById('pkgWeight').value,
+            customsFee: document.getElementById('customsFee').value,
+            sendDate: document.getElementById('sendDate').value,
+            arrivalDate: document.getElementById('arrivalDate').value
+        };
+
+        localStorage.setItem('swiftora_' + selectedId, JSON.stringify(payload));
+        alert('Data for ' + selectedId + ' updated successfully!');
+    });
+</script>
+</body>
+</html>

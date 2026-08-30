@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Package Tracking Details - Swiftora Xpress</title>
+    <style>
+        :root {
+            --primary: #0a2540;
+            --accent: #ff6b00;
+            --light: #f4f7f6;
+            --success: #28a745;
+            --danger: #dc3545;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: var(--light); padding-bottom: 50px; }
+
+        header {
+            background: var(--primary);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+
+        .card h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media(max-width: 600px) {
+            .grid-2 { grid-template-columns: 1fr; }
+        }
+
+        .info-group { margin-bottom: 12px; }
+        .info-group label { font-size: 0.85rem; color: #666; display: block; }
+        .info-group span { font-size: 1rem; font-weight: 600; color: #333; }
+
+        /* Timeline Progress Bar (10 Steps) */
+        .progress-timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            position: relative;
+            margin-top: 20px;
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .step-indicator {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.75rem;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .step.completed .step-indicator { background: var(--success); }
+        .step.active-hold .step-indicator {
+            background: var(--danger);
+            animation: blink 1s infinite alternate;
+        }
+
+        @keyframes blink {
+            from { opacity: 1; box-shadow: 0 0 2px var(--danger); }
+            to { opacity: 0.3; box-shadow: 0 0 10px var(--danger); }
+        }
+
+        .step-details { flex: 1; }
+        .step-details h4 { font-size: 0.95rem; }
+        .step-details p { font-size: 0.8rem; color: #777; }
+
+        .customs-alert {
+            background: #fff0f0;
+            border-left: 4px solid var(--danger);
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div style="font-size:1.5rem; font-weight:bold;">Swiftora <span style="color:var(--accent)">Xpress</span></div>
+        <a href="index.html" style="color:white; text-decoration:none;">&larr; Back to Home</a>
+    </header>
+
+    <div class="container">
+        <div class="card">
+            <h2>Tracking Summary: <span id="displayTrackingId" style="color:var(--accent);"></span></h2>
+            <div class="grid-2">
+                <div>
+                    <h3 style="margin-bottom: 10px; color:#555;">Sender Information</h3>
+                    <div class="info-group"><label>Sender Name / Company</label><span id="sName">--</span></div>
+                    <div class="info-group"><label>Origin Address</label><span id="sAddr">--</span></div>
+                    <div class="info-group"><label>Contact</label><span id="sPhone">--</span></div>
+                </div>
+                <div>
+                    <h3 style="margin-bottom: 10px; color:#555;">Receiver Information</h3>
+                    <div class="info-group"><label>Receiver Full Name</label><span id="rName">--</span></div>
+                    <div class="info-group"><label>Destination Address</label><span id="rAddr">--</span></div>
+                    <div class="info-group"><label>Destination Country</label><span id="rCountry">--</span></div>
+                    <div class="info-group"><label>Email & Phone</label><span id="rContact">--</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Package Details</h2>
+            <div class="grid-2">
+                <div class="info-group"><label>Item Description</label><span id="pkgDesc">--</span></div>
+                <div class="info-group"><label>Weight</label><span id="pkgWeight">--</span></div>
+                <div class="info-group"><label>Dispatch Date</label><span id="dispatchDate">--</span></div>
+                <div class="info-group"><label>Estimated Arrival</label><span id="etaDate">--</span></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>10-Stage Transit Progress</h2>
+            <div class="progress-timeline" id="timeline"></div>
+            
+            <div class="customs-alert" id="customsAlert" style="display:none;">
+                <h4 style="color:var(--danger);">Action Required: Customs Clearance Hold</h4>
+                <p>Your package requires an outstanding payment of <strong id="customsFeeAmount" style="color:var(--danger);">$0.00</strong> to complete final inspection and local release.</p>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+    (function(){
+    var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+    s1.async=true;
+    s1.src='https://embed.tawk.to/6a93085b6ad69c344ab8a62d/default';
+    s1.charset='UTF-8';
+    s1.setAttribute('crossorigin','*');
+    s0.parentNode.insertBefore(s1,s0);
+    })();
+    </script>
+
+    <script>
+        const stages = [
+            "Order Received & Processed at Facility",
+            "Dispatched to Departure Port",
+            "Outbound Customs Check Passed",
+            "Departed Origin Airport / Hub",
+            "In International Transit Flight",
+            "Arrived at Destination Hub Country",
+            "Sorting & Scanning Completed",
+            "Transfer to Local Regional Facility",
+            "Out for Final Doorstep Delivery",
+            "Customs Hold Clearance Fee Pending"
+        ];
+
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const trackId = urlParams.get('id');
+            document.getElementById('displayTrackingId').innerText = trackId || "Unknown";
+
+            const data = JSON.parse(localStorage.getItem('swiftora_' + trackId));
+
+            if (data) {
+                document.getElementById('sName').innerText = data.senderName;
+                document.getElementById('sAddr').innerText = data.senderAddr;
+                document.getElementById('sPhone').innerText = data.senderPhone;
+                
+                document.getElementById('rName').innerText = `${data.recName} (${data.recGender})`;
+                document.getElementById('rAddr').innerText = data.recAddr;
+                document.getElementById('rCountry').innerText = data.recCountry;
+                document.getElementById('rContact').innerText = `${data.recEmail} | ${data.recPhone}`;
+                
+                document.getElementById('pkgDesc').innerText = data.pkgDetails;
+                document.getElementById('pkgWeight').innerText = data.pkgWeight + " kg";
+                document.getElementById('dispatchDate').innerText = data.sendDate;
+                document.getElementById('etaDate').innerText = data.arrivalDate;
+
+                renderTimeline(data.customsFee);
+            } else {
+                renderTimeline("0");
+            }
+        };
+
+        function renderTimeline(customsFee) {
+            const container = document.getElementById('timeline');
+            container.innerHTML = "";
+
+            stages.forEach((stageName, idx) => {
+                const isLast = idx === 9;
+                const stepEl = document.createElement('div');
+                stepEl.className = `step ${isLast ? 'active-hold' : 'completed'}`;
+                
+                stepEl.innerHTML = `
+                    <div class="step-indicator">${idx + 1}</div>
+                    <div class="step-details">
+                        <h4>${stageName}</h4>
+                        <p>${isLast ? 'STATUS: Pending Clearance Payment' : 'Completed'}</p>
+                    </div>
+                `;
+                container.appendChild(stepEl);
+            });
+
+            if(customsFee) {
+                document.getElementById('customsAlert').style.display = 'block';
+                document.getElementById('customsFeeAmount').innerText = customsFee;
+            }
+        }
+    </script>
+</body>
+</html>
