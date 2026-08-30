@@ -1,166 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Package Tracking Details - Swiftora Xpress</title>
-    <style>
-        :root {
-            --primary: #0a2540;
-            --accent: #ff6b00;
-            --light: #f4f7f6;
-            --success: #28a745;
-            --danger: #dc3545;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
-        body { background-color: var(--light); padding-bottom: 50px; }
-
-        header {
-            background: var(--primary);
-            color: white;
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .container {
-            max-width: 900px;
-            margin: 30px auto;
-            padding: 0 20px;
-        }
-
-        .card {
-            background: white;
-            border-radius: 8px;
-            padding: 25px;
-            margin-bottom: 25px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
-        }
-
-        .card h2 {
-            color: var(--primary);
-            margin-bottom: 20px;
-            border-bottom: 2px solid #eee;
-            padding-bottom: 10px;
-        }
-
-        .grid-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        @media(max-width: 600px) {
-            .grid-2 { grid-template-columns: 1fr; }
-        }
-
-        .info-group { margin-bottom: 12px; }
-        .info-group label { font-size: 0.85rem; color: #666; display: block; }
-        .info-group span { font-size: 1rem; font-weight: 600; color: #333; }
-
-        /* Timeline Progress Bar (10 Steps) */
-        .progress-timeline {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            position: relative;
-            margin-top: 20px;
-        }
-
-        .step {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .step-indicator {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: #ccc;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 0.75rem;
-            font-weight: bold;
-            flex-shrink: 0;
-        }
-
-        .step.completed .step-indicator { background: var(--success); }
-        .step.active-hold .step-indicator {
-            background: var(--danger);
-            animation: blink 1s infinite alternate;
-        }
-
-        @keyframes blink {
-            from { opacity: 1; box-shadow: 0 0 2px var(--danger); }
-            to { opacity: 0.3; box-shadow: 0 0 10px var(--danger); }
-        }
-
-        .step-details { flex: 1; }
-        .step-details h4 { font-size: 0.95rem; }
-        .step-details p { font-size: 0.8rem; color: #777; }
-
-        .customs-alert {
-            background: #fff0f0;
-            border-left: 4px solid var(--danger);
-            padding: 15px;
-            border-radius: 4px;
-            margin-top: 20px;
-        }
-    </style>
-</head>
-<body>
-
-    <header>
-        <div style="font-size:1.5rem; font-weight:bold;">Swiftora <span style="color:var(--accent)">Xpress</span></div>
-        <a href="index.html" style="color:white; text-decoration:none;">&larr; Back to Home</a>
-    </header>
-
-    <div class="container">
-        <div class="card">
-            <h2>Tracking Summary: <span id="displayTrackingId" style="color:var(--accent);"></span></h2>
-            <div class="grid-2">
-                <div>
-                    <h3 style="margin-bottom: 10px; color:#555;">Sender Information</h3>
-                    <div class="info-group"><label>Sender Name / Company</label><span id="sName">--</span></div>
-                    <div class="info-group"><label>Origin Address</label><span id="sAddr">--</span></div>
-                    <div class="info-group"><label>Contact</label><span id="sPhone">--</span></div>
-                </div>
-                <div>
-                    <h3 style="margin-bottom: 10px; color:#555;">Receiver Information</h3>
-                    <div class="info-group"><label>Receiver Full Name</label><span id="rName">--</span></div>
-                    <div class="info-group"><label>Destination Address</label><span id="rAddr">--</span></div>
-                    <div class="info-group"><label>Destination Country</label><span id="rCountry">--</span></div>
-                    <div class="info-group"><label>Email & Phone</label><span id="rContact">--</span></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="card">
-            <h2>Package Details</h2>
-            <div class="grid-2">
-                <div class="info-group"><label>Item Description</label><span id="pkgDesc">--</span></div>
-                <div class="info-group"><label>Weight</label><span id="pkgWeight">--</span></div>
-                <div class="info-group"><label>Dispatch Date</label><span id="dispatchDate">--</span></div>
-                <div class="info-group"><label>Estimated Arrival</label><span id="etaDate">--</span></div>
-            </div>
-        </div>
-
-        <div class="card">
-            <h2>10-Stage Transit Progress</h2>
-            <div class="progress-timeline" id="timeline"></div>
-            
-            <div class="customs-alert" id="customsAlert" style="display:none;">
-                <h4 style="color:var(--danger);">Action Required: Customs Clearance Hold</h4>
-                <p>Your package requires an outstanding payment of <strong id="customsFeeAmount" style="color:var(--danger);">$0.00</strong> to complete final inspection and local release.</p>
-            </div>
-        </div>
-    </div>
-
+    <title>Enterprise Tracking Terminal | Swiftora Xpress</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+    
     <script type="text/javascript">
     var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
     (function(){
@@ -172,6 +21,461 @@
     s0.parentNode.insertBefore(s1,s0);
     })();
     </script>
+
+    <style>
+        :root {
+            --bg-main: #050811;
+            --bg-surface: #0E1322;
+            --bg-card: #161C2E;
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --border-accent: rgba(0, 240, 255, 0.3);
+            
+            --brand-primary: #00F0FF;
+            --brand-secondary: #3B82F6;
+            --brand-gradient: linear-gradient(135deg, #00F0FF 0%, #3B82F6 100%);
+            
+            --text-heading: #FFFFFF;
+            --text-body: #94A3B8;
+            --text-muted: #64748B;
+            
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            
+            --shadow-glow: 0 0 30px rgba(0, 240, 255, 0.15);
+            --shadow-card: 0 20px 40px -15px rgba(0, 0, 0, 0.7);
+            --radius-sm: 8px;
+            --radius-md: 14px;
+            --radius-lg: 20px;
+        }
+
+        [data-theme="light"] {
+            --bg-main: #F1F5F9;
+            --bg-surface: #FFFFFF;
+            --bg-card: #E2E8F0;
+            --border-subtle: rgba(0, 0, 0, 0.08);
+            --border-accent: rgba(59, 130, 246, 0.3);
+            
+            --text-heading: #0F172A;
+            --text-body: #334155;
+            --text-muted: #64748B;
+            
+            --shadow-card: 0 20px 40px -15px rgba(0, 0, 0, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Space Grotesk', system-ui, -apple-system, sans-serif;
+            transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+        }
+
+        h1, h2, h3, h4, .font-heading {
+            font-family: 'Syne', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-body);
+            line-height: 1.6;
+            padding-bottom: 80px;
+        }
+
+        /* Glass Header */
+        header {
+            position: sticky;
+            top: 0;
+            background: rgba(14, 19, 34, 0.88);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 16px 4%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .header-logo-img {
+            height: 38px;
+            width: auto;
+        }
+
+        .btn-back {
+            background: var(--bg-card);
+            color: var(--text-heading);
+            border: 1px solid var(--border-subtle);
+            padding: 8px 18px;
+            border-radius: var(--radius-sm);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-back:hover {
+            border-color: var(--brand-primary);
+            color: var(--brand-primary);
+        }
+
+        /* Layout Grid */
+        .container {
+            max-width: 1200px;
+            margin: 40px auto 0 auto;
+            padding: 0 4%;
+        }
+
+        .tracking-header-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow-card);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tracking-header-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 4px;
+            background: var(--brand-gradient);
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(239, 68, 68, 0.12);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            color: var(--danger);
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 16px;
+        }
+
+        .pulse-red {
+            width: 8px;
+            height: 8px;
+            background: var(--danger);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--danger);
+            animation: pulseAnim 1.5s infinite;
+        }
+
+        @keyframes pulseAnim {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(1.2); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 30px;
+        }
+
+        .card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 30px;
+            box-shadow: var(--shadow-card);
+            margin-bottom: 30px;
+        }
+
+        .card h3 {
+            color: var(--text-heading);
+            font-size: 1.25rem;
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card h3 i {
+            color: var(--brand-primary);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .info-group label {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 700;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .info-group span {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-heading);
+            word-break: break-word;
+        }
+
+        /* Custom Timeline System */
+        .timeline-container {
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .timeline-container::before {
+            content: '';
+            position: absolute;
+            top: 15px;
+            bottom: 25px;
+            left: 31px;
+            width: 2px;
+            background: var(--border-subtle);
+        }
+
+        .timeline-step {
+            position: relative;
+            display: flex;
+            gap: 20px;
+            padding-bottom: 28px;
+        }
+
+        .timeline-step:last-child {
+            padding-bottom: 0;
+        }
+
+        .node-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 2px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            z-index: 2;
+            flex-shrink: 0;
+        }
+
+        .timeline-step.completed .node-icon {
+            background: var(--success);
+            border-color: var(--success);
+            color: #000;
+        }
+
+        .timeline-step.active-hold .node-icon {
+            background: var(--danger);
+            border-color: var(--danger);
+            color: #FFF;
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.6);
+            animation: pulseAnim 1.2s infinite;
+        }
+
+        .node-details h4 {
+            font-size: 0.95rem;
+            color: var(--text-heading);
+            font-weight: 700;
+        }
+
+        .node-details p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .node-details .tag-status {
+            display: inline-block;
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-top: 6px;
+        }
+
+        .tag-completed {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .tag-hold {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--danger);
+        }
+
+        /* Action Alert Box */
+        .customs-alert-card {
+            background: rgba(239, 68, 68, 0.05);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            margin-top: 20px;
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+        }
+
+        .alert-icon-wrap {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .alert-body h4 {
+            color: var(--danger);
+            font-size: 1.05rem;
+            margin-bottom: 6px;
+        }
+
+        .alert-body p {
+            font-size: 0.88rem;
+            color: var(--text-body);
+        }
+
+        .fee-tag {
+            color: var(--danger);
+            font-weight: 800;
+            font-size: 1.1rem;
+        }
+
+        @media(max-width: 900px) {
+            .dashboard-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="index.html" class="logo-container">
+            <img src="swiftoralogo.png" alt="Swiftora Xpress Logo" class="header-logo-img">
+        </a>
+        <a href="index.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i> Return to Terminal</a>
+    </header>
+
+    <div class="container">
+        <div class="tracking-header-card">
+            <div class="status-badge" id="statusBadge">
+                <span class="pulse-red"></span> Action Required: Clearance Pending
+            </div>
+            <h1 style="color: var(--text-heading); font-size: 2rem; margin-bottom: 6px;">
+                Waypoint ID: <span id="displayTrackingId" style="color: var(--brand-primary);">--</span>
+            </h1>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">
+                Consignment Telemetry Feed & Gateway Status
+            </p>
+        </div>
+
+        <div class="dashboard-grid">
+            <div>
+                <div class="card">
+                    <h3><i class="fa-solid fa-box"></i> Consignment Manifest</h3>
+                    <div class="info-grid">
+                        <div class="info-group">
+                            <label>Item Description</label>
+                            <span id="pkgDesc">--</span>
+                        </div>
+                        <div class="info-group">
+                            <label>Freight Mass</label>
+                            <span id="pkgWeight">--</span>
+                        </div>
+                        <div class="info-group">
+                            <label>Dispatch Date</label>
+                            <span id="dispatchDate">--</span>
+                        </div>
+                        <div class="info-group">
+                            <label>Estimated Arrival (ETA)</label>
+                            <span id="etaDate">--</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3><i class="fa-solid fa-plane-departure"></i> Origin & Waypoint Manifest</h3>
+                    <div class="info-grid" style="margin-bottom: 24px;">
+                        <div class="info-group">
+                            <label>Shipper/Entity</label>
+                            <span id="sName">--</span>
+                        </div>
+                        <div class="info-group">
+                            <label>Dispatch Hub</label>
+                            <span id="sAddr">--</span>
+                        </div>
+                        <div class="info-group">
+                            <label>Origin Contact</label>
+                            <span id="sPhone">--</span>
+                        </div>
+                    </div>
+
+                    <h3 style="margin-top: 30px;"><i class="fa-solid fa-plane-arrival"></i> Receiver Terminal</h3>
+                    <div class="info-grid">
+                        <div class="info-group">
+                            <label>Consignee Name</label>
+                            <span id="rName">--</span>
+                        </div>
+                        <div class="info-group">
+                            <label>Destination Gateway</label>
+                            <span id="rCountry">--</span>
+                        </div>
+                        <div class="info-group">
+                            <label>Delivery Address</label>
+                            <span id="rAddr">--</span>
+                        </div>
+                        <div class="info-group">
+                            <label>Consignee Channel</label>
+                            <span id="rContact">--</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <div class="card">
+                    <h3><i class="fa-solid fa-route"></i> Telemetry Pipeline</h3>
+                    
+                    <div class="timeline-container" id="timeline"></div>
+
+                    <div class="customs-alert-card" id="customsAlert" style="display:none;">
+                        <div class="alert-icon-wrap">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                        </div>
+                        <div class="alert-body">
+                            <h4>Customs Hold Inspection</h4>
+                            <p>An outstanding fee of <span class="fee-tag" id="customsFeeAmount">$0.00</span> is required to pass international inspection and unlock local dispatch.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
         const stages = [
@@ -190,24 +494,24 @@
         window.onload = function() {
             const urlParams = new URLSearchParams(window.location.search);
             const trackId = urlParams.get('id');
-            document.getElementById('displayTrackingId').innerText = trackId || "Unknown";
+            document.getElementById('displayTrackingId').innerText = trackId || "SWFT-UNVERIFIED";
 
             const data = JSON.parse(localStorage.getItem('swiftora_' + trackId));
 
             if (data) {
-                document.getElementById('sName').innerText = data.senderName;
-                document.getElementById('sAddr').innerText = data.senderAddr;
-                document.getElementById('sPhone').innerText = data.senderPhone;
+                document.getElementById('sName').innerText = data.senderName || "--";
+                document.getElementById('sAddr').innerText = data.senderAddr || "--";
+                document.getElementById('sPhone').innerText = data.senderPhone || "--";
                 
                 document.getElementById('rName').innerText = `${data.recName} (${data.recGender})`;
-                document.getElementById('rAddr').innerText = data.recAddr;
-                document.getElementById('rCountry').innerText = data.recCountry;
+                document.getElementById('rAddr').innerText = data.recAddr || "--";
+                document.getElementById('rCountry').innerText = data.recCountry || "--";
                 document.getElementById('rContact').innerText = `${data.recEmail} | ${data.recPhone}`;
                 
-                document.getElementById('pkgDesc').innerText = data.pkgDetails;
-                document.getElementById('pkgWeight').innerText = data.pkgWeight + " kg";
-                document.getElementById('dispatchDate').innerText = data.sendDate;
-                document.getElementById('etaDate').innerText = data.arrivalDate;
+                document.getElementById('pkgDesc').innerText = data.pkgDetails || "--";
+                document.getElementById('pkgWeight').innerText = data.pkgWeight ? (data.pkgWeight + " kg") : "--";
+                document.getElementById('dispatchDate').innerText = data.sendDate || "--";
+                document.getElementById('etaDate').innerText = data.arrivalDate || "--";
 
                 renderTimeline(data.customsFee);
             } else {
@@ -222,20 +526,25 @@
             stages.forEach((stageName, idx) => {
                 const isLast = idx === 9;
                 const stepEl = document.createElement('div');
-                stepEl.className = `step ${isLast ? 'active-hold' : 'completed'}`;
+                stepEl.className = `timeline-step ${isLast ? 'active-hold' : 'completed'}`;
                 
                 stepEl.innerHTML = `
-                    <div class="step-indicator">${idx + 1}</div>
-                    <div class="step-details">
+                    <div class="node-icon">
+                        ${isLast ? '<i class="fa-solid fa-shield-cat"></i>' : '<i class="fa-solid fa-check"></i>'}
+                    </div>
+                    <div class="node-details">
                         <h4>${stageName}</h4>
-                        <p>${isLast ? 'STATUS: Pending Clearance Payment' : 'Completed'}</p>
+                        <p>${isLast ? 'Waypoint Flag: Immediate Clearance Action Required' : 'Completed Hub Check'}</p>
+                        <span class="tag-status ${isLast ? 'tag-hold' : 'tag-completed'}">
+                            ${isLast ? 'Hold Active' : 'Cleared'}
+                        </span>
                     </div>
                 `;
                 container.appendChild(stepEl);
             });
 
             if(customsFee) {
-                document.getElementById('customsAlert').style.display = 'block';
+                document.getElementById('customsAlert').style.display = 'flex';
                 document.getElementById('customsFeeAmount').innerText = customsFee;
             }
         }
