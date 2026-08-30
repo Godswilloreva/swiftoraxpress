@@ -7,7 +7,7 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&family=Great+Vibes&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -346,6 +346,7 @@
             border-radius: var(--radius-md);
             padding: 24px;
             margin-top: 20px;
+            position: relative;
         }
 
         .receipt-line {
@@ -564,7 +565,7 @@
 
                 <div class="card">
                     <h3><i class="fa-solid fa-file-invoice-dollar"></i> Freight & Customs Receipt</h3>
-                    <div class="receipt-card" id="downloadableReceipt">
+                    <div class="receipt-card">
                         <div style="text-align: center; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border-subtle);">
                             <h4 style="color:var(--brand-primary); font-size:1.1rem;">SWIFTORA XPRESS LOGISTICS</h4>
                             <p style="font-size:0.75rem; color:var(--text-muted);">Waybill Clearance Invoice Statement</p>
@@ -587,8 +588,8 @@
                         </div>
                     </div>
 
-                    <button class="btn-download-pdf" onclick="downloadReceiptPDF()">
-                        <i class="fa-solid fa-file-pdf"></i> Download Receipt (PDF)
+                    <button class="btn-download-pdf" id="downloadPdfBtn">
+                        <i class="fa-solid fa-file-pdf"></i> Download Official Waybill Receipt (PDF)
                     </button>
                 </div>
             </div>
@@ -625,28 +626,31 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
+        let liveShipmentData = null;
+        let currentTrackingId = "";
+
         window.addEventListener('DOMContentLoaded', async () => {
             const urlParams = new URLSearchParams(window.location.search);
-            const trackId = urlParams.get('id');
+            currentTrackingId = urlParams.get('id');
             const displayIdEl = document.getElementById('displayTrackingId');
 
-            if (!trackId) {
+            if (!currentTrackingId) {
                 displayIdEl.innerText = "NO-TRACKING-ID";
                 return;
             }
 
-            displayIdEl.innerText = trackId;
+            displayIdEl.innerText = currentTrackingId;
 
             try {
-                const docRef = doc(db, "shipments", trackId);
+                const docRef = doc(db, "shipments", currentTrackingId);
                 const docSnap = await getDoc(docRef);
 
                 if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    populateDetails(data);
-                    calculateAndRenderTimeline(data);
+                    liveShipmentData = docSnap.data();
+                    populateDetails(liveShipmentData);
+                    calculateAndRenderTimeline(liveShipmentData);
                 } else {
-                    displayIdEl.innerText = `${trackId} (Not Found)`;
+                    displayIdEl.innerText = `${currentTrackingId} (Not Found)`;
                 }
             } catch (err) {
                 console.error("Firestore error:", err);
@@ -761,23 +765,123 @@
                 document.getElementById('customsAlert').style.display = 'none';
             }
         }
-    </script>
 
-    <script>
-        function downloadReceiptPDF() {
-            const element = document.getElementById('downloadableReceipt');
-            const trackingId = document.getElementById('displayTrackingId').innerText || 'Receipt';
+        // Generate PDF Receipt with Stamp, Signature and "FULLY PAID" Watermark
+        document.getElementById('downloadPdfBtn').addEventListener('click', () => {
+            if (!liveShipmentData) {
+                alert("Shipment record loading... please try again in a moment.");
+                return;
+            }
+
+            const d = liveShipmentData;
             
+            const pdfContainer = document.createElement('div');
+            pdfContainer.style.padding = '30px';
+            pdfContainer.style.backgroundColor = '#ffffff';
+            pdfContainer.style.color = '#000000';
+            pdfContainer.style.fontFamily = 'Arial, sans-serif';
+            pdfContainer.style.position = 'relative';
+            pdfContainer.style.overflow = 'hidden';
+
+            pdfContainer.innerHTML = `
+                <div style="position: absolute; top: 38%; left: 10%; transform: rotate(-30deg); font-size: 75px; font-weight: 900; color: rgba(16, 185, 129, 0.15); border: 10px solid rgba(16, 185, 129, 0.15); padding: 10px 30px; text-transform: uppercase; border-radius: 15px; pointer-events: none; z-index: 1;">
+                    FULLY PAID
+                </div>
+
+                <div style="border-bottom: 2px solid #00F0FF; padding-bottom: 15px; margin-bottom: 20px; position: relative; z-index: 2;">
+                    <h2 style="color: #0088CC; margin: 0; font-size: 24px; font-weight: 800;">SWIFTORA XPRESS LOGISTICS</h2>
+                    <p style="margin: 3px 0 0 0; color: #555; font-size: 13px;">Official Consignment Waybill & Freight Clearance Receipt</p>
+                    <p style="margin: 5px 0 0 0; font-weight: bold; font-size: 14px; color: #111;">Tracking Waybill ID: ${currentTrackingId}</p>
+                </div>
+
+                <div style="margin-bottom: 20px; position: relative; z-index: 2;">
+                    <h3 style="background: #f0f4f8; padding: 6px 10px; margin: 0 0 10px 0; font-size: 13px; color: #333; font-weight: 700;">1. CARRIER & SERVICE COMPANY</h3>
+                    <table style="width: 100%; font-size: 11px; border-collapse: collapse;">
+                        <tr><td style="padding: 4px; font-weight: bold; width: 35%;">Delivery Company:</td><td style="padding: 4px;">${d.deliveryCompanyName || 'Swiftora Xpress Terminal'}</td></tr>
+                        <tr><td style="padding: 4px; font-weight: bold;">Company Address:</td><td style="padding: 4px;">${d.deliveryCompanyAddress || 'Global Freight Gateway Station'}</td></tr>
+                        <tr><td style="padding: 4px; font-weight: bold;">Company Direct Contact:</td><td style="padding: 4px;">${d.deliveryCompanyPhone || '+1 (800) SWIFTORA'}</td></tr>
+                    </table>
+                </div>
+
+                <div style="margin-bottom: 20px; position: relative; z-index: 2;">
+                    <h3 style="background: #f0f4f8; padding: 6px 10px; margin: 0 0 10px 0; font-size: 13px; color: #333; font-weight: 700;">2. CONSIGNMENT SPECIFICATIONS</h3>
+                    <table style="width: 100%; font-size: 11px; border-collapse: collapse;">
+                        <tr><td style="padding: 4px; font-weight: bold; width: 35%;">Item Description:</td><td style="padding: 4px;">${d.packageName || 'N/A'}</td></tr>
+                        <tr><td style="padding: 4px; font-weight: bold;">Freight Mass / Weight:</td><td style="padding: 4px;">${d.packageWeight || 'N/A'}</td></tr>
+                        <tr><td style="padding: 4px; font-weight: bold;">Dispatch Date:</td><td style="padding: 4px;">${d.dateOfSent ? new Date(d.dateOfSent).toLocaleString() : 'N/A'}</td></tr>
+                        <tr><td style="padding: 4px; font-weight: bold;">Estimated Arrival (ETA):</td><td style="padding: 4px;">${d.dateToBeReceived ? new Date(d.dateToBeReceived).toLocaleString() : 'N/A'}</td></tr>
+                    </table>
+                </div>
+
+                <div style="margin-bottom: 20px; position: relative; z-index: 2;">
+                    <h3 style="background: #f0f4f8; padding: 6px 10px; margin: 0 0 10px 0; font-size: 13px; color: #333; font-weight: 700;">3. ORIGIN & SHIPPER DETAILS</h3>
+                    <table style="width: 100%; font-size: 11px; border-collapse: collapse;">
+                        <tr><td style="padding: 4px; font-weight: bold; width: 35%;">Shipper Full Name:</td><td style="padding: 4px;">${d.senderFullName || 'N/A'}</td></tr>
+                        <tr><td style="padding: 4px; font-weight: bold;">Dispatch Address:</td><td style="padding: 4px;">${d.senderAddress || 'N/A'}</td></tr>
+                        <tr><td style="padding: 4px; font-weight: bold;">Current Location:</td><td style="padding: 4px;">${d.senderCurrentLocation || 'N/A'}</td></tr>
+                        <tr><td style="padding: 4px; font-weight: bold;">Passport ID:</td><td style="padding: 4px;">${d.senderPassportId || 'N/A'}</td></tr>
+                        <tr><td style="padding: 4px; font-weight: bold;">Sender SSN:</td><td style="padding: 4px;">${d.senderSSN || 'N/A'}</td></tr>
+                    </table>
+                </div>
+
+                <div style="margin-bottom: 20px; position: relative; z-index: 2;">
+                    <h3 style="background: #f0f4f8; padding: 6px 10px; margin: 0 0 10px 0; font-size: 13px; color: #333; font-weight: 700;">4. CONSIGNEE / RECEIVER RECORDS</h3>
+                    <table style="width: 100%; font-size: 11px; border-collapse: collapse;">
+                        <tr><td style="padding: 4px; font-weight: bold; width: 35%;">Receiver Full Name:</td><td style="padding: 4px;">${d.receiverFullName || 'N/A'}</td></tr>
+                        <tr><td style="padding: 4px; font-weight: bold;">Destination Country/State:</td><td style="padding: 4px;">${d.countryOfDestination || 'N/A'} (${d.receiverState || 'N/A'})</td></tr>
+                        <tr><td style="padding: 4px; font-weight: bold;">House Address:</td><td style="padding: 4px;">${d.receiverHouseAddress || 'N/A'}</td></tr>
+                        <tr><td style="padding: 4px; font-weight: bold;">Email Address:</td><td style="padding: 4px;">${d.receiverEmail || 'N/A'}</td></tr>
+                        <tr><td style="padding: 4px; font-weight: bold;">Phone Number:</td><td style="padding: 4px;">${d.receiverPhone || 'N/A'}</td></tr>
+                        <tr><td style="padding: 4px; font-weight: bold;">Social Contact:</td><td style="padding: 4px;">${d.receiverSocialPhone || 'N/A'}</td></tr>
+                    </table>
+                </div>
+
+                <div style="margin-bottom: 20px; position: relative; z-index: 2;">
+                    <h3 style="background: #f0f4f8; padding: 6px 10px; margin: 0 0 10px 0; font-size: 13px; color: #333; font-weight: 700;">5. FINANCIAL CLEARANCE STATEMENT</h3>
+                    <table style="width: 100%; font-size: 11px; border-collapse: collapse;">
+                        <tr style="border-bottom: 1px solid #eee;"><td style="padding: 5px; font-weight: bold;">Declared Package Value:</td><td style="padding: 5px; text-align: right;">${d.totalCostOfPackage || '$0.00'}</td></tr>
+                        <tr style="border-bottom: 1px solid #eee;"><td style="padding: 5px; font-weight: bold;">Freight & Logistics Fee:</td><td style="padding: 5px; text-align: right;">Included</td></tr>
+                        <tr style="border-bottom: 1px solid #eee;"><td style="padding: 5px; font-weight: bold;">Customs Inspection Duty Fee:</td><td style="padding: 5px; text-align: right;">${d.customClearanceFee || '$0.00'}</td></tr>
+                        <tr><td style="padding: 8px; font-weight: bold; font-size: 13px;">Total Payable Amount:</td><td style="padding: 8px; text-align: right; font-weight: bold; font-size: 13px; color: #0088CC;">${d.totalCostOfPackage || '$0.00'}</td></tr>
+                    </table>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 25px; padding-top: 15px; border-top: 2px dashed #bbb; position: relative; z-index: 2;">
+                    <div style="border: 3px double #0033aa; width: 130px; height: 130px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; color: #0033aa; transform: rotate(-8deg); box-sizing: border-box; padding: 5px;">
+                        <span style="font-size: 8px; font-weight: 800; letter-spacing: 0.5px;">SWIFTORA XPRESS</span>
+                        <span style="font-size: 16px; margin: 2px 0;">★ ★ ★</span>
+                        <span style="font-size: 9px; font-weight: 900; text-transform: uppercase; border-top: 1px solid #0033aa; border-bottom: 1px solid #0033aa; padding: 2px 0;">VERIFIED & PAID</span>
+                        <span style="font-size: 7px; margin-top: 2px;">CLEARANCE DEPT</span>
+                    </div>
+
+                    <div style="text-align: right; width: 200px;">
+                        <div style="font-family: 'Great Vibes', cursive, sans-serif; font-size: 32px; color: #001f54; margin-bottom: -8px;">
+                            S. E. Vance
+                        </div>
+                        <div style="border-top: 1.5px solid #333; padding-top: 4px; font-size: 11px; font-weight: bold; color: #222;">
+                            Authorized Officer
+                        </div>
+                        <div style="font-size: 9px; color: #666;">
+                            Swiftora Logistics Dispatch Operations
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px; text-align: center; font-size: 9px; color: #777;">
+                    Verified Digital Waybill Receipt &bull; Swiftora Xpress Logistics Terminal &bull; Issued: ${new Date().toLocaleString()}
+                </div>
+            `;
+
             const opt = {
-                margin:       10,
-                filename:     `Receipt_${trackingId}.pdf`,
+                margin:       8,
+                filename:     `Swiftora_Receipt_${currentTrackingId}.pdf`,
                 image:        { type: 'jpeg', quality: 0.98 },
                 html2canvas:  { scale: 2 },
                 jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
 
-            html2pdf().set(opt).from(element).save();
-        }
+            html2pdf().set(opt).from(pdfContainer).save();
+        });
     </script>
 </body>
 </html>
