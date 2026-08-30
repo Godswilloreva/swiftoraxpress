@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Trust & Client Support Portal | Swiftora Xpress</title>
+    
+    <!-- External Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.2.3/css/flag-icons.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+    
+    <!-- Tawk.to Live Chat -->
+    <script type="text/javascript">
+    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+    (function(){
+    var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+    s1.async=true;
+    s1.src='https://embed.tawk.to/6a93085b6ad69c344ab8a62d/default';
+    s1.charset='UTF-8';
+    s1.setAttribute('crossorigin','*');
+    s0.parentNode.insertBefore(s1,s0);
+    })();
+    </script>
+    
+    <style>
+        /* ==========================================
+           1. Core Design Tokens & System
+           ========================================== */
+        :root {
+            --bg-main: #050811;
+            --bg-surface: #0E1322;
+            --bg-card: #161C2E;
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --border-accent: rgba(0, 240, 255, 0.4);
+            
+            --brand-primary: #00F0FF;
+            --brand-secondary: #3B82F6;
+            --brand-gradient: linear-gradient(135deg, #00F0FF 0%, #3B82F6 100%);
+            
+            --text-heading: #FFFFFF;
+            --text-body: #94A3B8;
+            --text-muted: #64748B;
+            
+            --shadow-glow: 0 0 30px rgba(0, 240, 255, 0.18);
+            --shadow-card: 0 20px 40px -15px rgba(0, 0, 0, 0.7);
+            --radius-sm: 6px;
+            --radius-md: 12px;
+            --radius-lg: 20px;
+        }
+
+        [data-theme="light"] {
+            --bg-main: #F1F5F9;
+            --bg-surface: #FFFFFF;
+            --bg-card: #E2E8F0;
+            --border-subtle: rgba(0, 0, 0, 0.08);
+            --border-accent: rgba(59, 130, 246, 0.3);
+            
+            --text-heading: #0F172A;
+            --text-body: #334155;
+            --text-muted: #64748B;
+            
+            --shadow-glow: 0 0 25px rgba(59, 130, 246, 0.12);
+            --shadow-card: 0 20px 40px -15px rgba(0, 0, 0, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Space Grotesk', system-ui, -apple-system, sans-serif;
+            transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+        }
+
+        h1, h2, h3, h4, .font-heading {
+            font-family: 'Syne', sans-serif;
+        }
+
+        html { scroll-behavior: smooth; }
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-body);
+            line-height: 1.6;
+            overflow-x: hidden;
+            top: 0px !important;
+        }
+
+        /* Third-Party Overrides */
+        .goog-te-banner-frame, .goog-te-gadget-icon { display: none !important; }
+        .goog-te-gadget { color: transparent !important; font-size: 0 !important; }
+        #google_translate_element { display: inline-block; }
+        #google_translate_element select {
+            background: var(--bg-card);
+            color: var(--text-heading);
+            border: 1px solid var(--border-subtle);
+            padding: 8px 12px;
+            border-radius: var(--radius-sm);
+            outline: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* ==========================================
+           2. Glass Header Navigation
+           ========================================== */
+        header {
+            position: fixed;
+            top: 15px;
+            left: 4%;
+            right: 4%;
+            background: rgba(14, 19, 34, 0.88);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 10px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: var(--shadow-card);
+        }
+
+        [data-theme="light"] header { background: rgba(255, 255, 255, 0.9); }
+
+        .logo-container { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+        .header-logo-img { height: 42px; width: auto; object-fit: contain; }
+
+        .nav-links { display: flex; gap: 28px; list-style: none; }
+        .nav-links a { color: var(--text-body); text-decoration: none; font-weight: 600; font-size: 0.9rem; }
+        .nav-links a:hover, .nav-links a.active { color: var(--brand-primary); }
+
+        .header-controls { display: flex; align-items: center; gap: 12px; }
+        .btn-theme {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-heading);
+            padding: 8px 14px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        /* ==========================================
+           3. Hero Header
+           ========================================== */
+        .cust-hero {
+            padding: 150px 4% 60px 4%;
+            background: radial-gradient(circle at 50% 20%, rgba(0, 240, 255, 0.08) 0%, transparent 60%);
+            text-align: center;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(0, 240, 255, 0.08);
+            border: 1px solid var(--border-accent);
+            color: var(--brand-primary);
+            padding: 6px 18px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--brand-primary);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--brand-primary);
+        }
+
+        .cust-hero h1 {
+            font-size: 3.2rem;
+            color: var(--text-heading);
+            margin-bottom: 16px;
+        }
+
+        .cust-hero h1 span {
+            background: var(--brand-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .cust-hero p {
+            max-width: 650px;
+            margin: 0 auto;
+            color: var(--text-body);
+            font-size: 1.1rem;
+        }
+
+        /* ==========================================
+           4. Trust Metrics & Verification Bar
+           ========================================== */
+        .trust-bar {
+            max-width: 1300px;
+            margin: 0 auto 70px auto;
+            padding: 0 4%;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+        }
+
+        .trust-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            padding: 24px;
+            border-radius: var(--radius-md);
+            text-align: center;
+            box-shadow: var(--shadow-card);
+        }
+
+        .trust-score {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--text-heading);
+            margin-bottom: 4px;
+            font-family: 'Syne', sans-serif;
+        }
+
+        .stars {
+            color: #F59E0B;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+
+        .trust-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        /* ==========================================
+           5. Verified Client Reviews & Testimonials
+           ========================================== */
+        .reviews-section {
+            max-width: 1300px;
+            margin: 0 auto 90px auto;
+            padding: 0 4%;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .section-title h2 {
+            font-size: 2.2rem;
+            color: var(--text-heading);
+            margin-bottom: 8px;
+        }
+
+        .reviews-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+            gap: 24px;
+        }
+
+        .review-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 28px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: var(--shadow-card);
+        }
+
+        .review-card:hover {
+            border-color: var(--border-accent);
+            transform: translateY(-4px);
+        }
+
+        .review-quote {
+            color: var(--text-heading);
+            font-size: 0.95rem;
+            line-height: 1.7;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+
+        .review-author {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            border-top: 1px solid var(--border-subtle);
+            padding-top: 16px;
+        }
+
+        .author-avatar {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            background: var(--brand-gradient);
+            color: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.1rem;
+        }
+
+        .author-info h4 {
+            color: var(--text-heading);
+            font-size: 0.95rem;
+        }
+
+        .author-info p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .badge-verified {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.72rem;
+            color: #10B981;
+            background: rgba(16, 185, 129, 0.1);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: 700;
+            margin-top: 4px;
+        }
+
+        /* ==========================================
+           6. Customer Support & Inquiry Form
+           ========================================== */
+        .support-section {
+            max-width: 1100px;
+            margin: 0 auto 100px auto;
+            padding: 0 4%;
+        }
+
+        .support-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-accent);
+            border-radius: var(--radius-lg);
+            padding: 40px;
+            box-shadow: var(--shadow-card);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 24px;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-sm);
+            color: var(--text-heading);
+            font-size: 0.95rem;
+            outline: none;
+        }
+
+        .form-control:focus {
+            border-color: var(--brand-primary);
+            box-shadow: var(--shadow-glow);
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .btn-submit {
+            background: var(--brand-gradient);
+            border: none;
+            color: #000;
+            font-weight: 800;
+            padding: 16px 32px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 0.95rem;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .btn-submit:hover {
+            box-shadow: var(--shadow-glow);
+        }
+
+        .alert-success {
+            display: none;
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid #10B981;
+            color: #10B981;
+            padding: 14px;
+            border-radius: var(--radius-sm);
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        /* ==========================================
+           7. Floating Action Hub & Footer
+           ========================================== */
+        .floating-hub {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            z-index: 99999;
+        }
+
+        .float-btn {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #FFFFFF;
+            text-decoration: none;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .float-btn-gmail { background: linear-gradient(135deg, #EA4335 0%, #BB001B 100%); }
+        .float-btn-chat { background: linear-gradient(135deg, #00F0FF 0%, #3B82F6 100%); color: #000; }
+
+        footer {
+            background: #03060D;
+            border-top: 1px solid var(--border-subtle);
+            padding: 80px 4% 30px 4%;
+            margin-top: 120px;
+        }
+
+        .footer-grid {
+            max-width: 1300px;
+            margin: 0 auto 60px auto;
+            display: grid;
+            grid-template-columns: 1.8fr repeat(3, 1fr);
+            gap: 40px;
+        }
+
+        .footer-col h4 { color: var(--text-heading); font-size: 1rem; margin-bottom: 20px; font-weight: 700; }
+        .footer-col ul { list-style: none; }
+        .footer-col li { margin-bottom: 12px; }
+        .footer-col a { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; }
+        .footer-col a:hover { color: var(--brand-primary); }
+
+        .footer-bottom {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding-top: 30px;
+            border-top: 1px solid var(--border-subtle);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .cust-hero h1 { font-size: 2.3rem; }
+            .form-grid { grid-template-columns: 1fr; }
+            .footer-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Glass Header Navigation -->
+    <header>
+        <a href="index.html" class="logo-container">
+            <img src="swiftoralogo.png" alt="Swiftora Xpress Logo" class="header-logo-img">
+        </a>
+
+        <ul class="nav-links">
+            <li><a href="index.html#rates">Destination Rates</a></li>
+            <li><a href="destination.html">Global Hubs</a></li>
+            <li><a href="global.html">Global Network</a></li>
+            <li><a href="customer.html" class="active">Customer Trust</a></li>
+            <li><a href="index.html#track">Tracking Portal</a></li>
+        </ul>
+
+        <div class="header-controls">
+            <div id="google_translate_element"></div>
+            <button class="btn-theme" id="themeBtn">Light Mode</button>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="cust-hero">
+        <div class="hero-badge">
+            <span class="pulse-dot"></span> 99.4% On-Time International Flight Clearance
+        </div>
+        <h1>Customer Trust & <span>Client Portal</span></h1>
+        <p>Discover real shipping experiences from international enterprises and access direct 24/7 client dispatch support.</p>
+    </section>
+
+    <!-- Trust Metrics Bar -->
+    <div class="trust-bar">
+        <div class="trust-card">
+            <div class="trust-score">4.9 / 5.0</div>
+            <div class="stars">
+                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            </div>
+            <div class="trust-label">Overall Client Rating</div>
+        </div>
+
+        <div class="trust-card">
+            <div class="trust-score">150,000+</div>
+            <div class="stars" style="color:var(--brand-primary);"><i class="fa-solid fa-box-check"></i> Verified Deliveries</div>
+            <div class="trust-label">Cross-Border Shipments</div>
+        </div>
+
+        <div class="trust-card">
+            <div class="trust-score">&lt; 15 Mins</div>
+            <div class="stars" style="color:var(--brand-primary);"><i class="fa-solid fa-headset"></i> Fast Response</div>
+            <div class="trust-label">Average Support Ticket Resolution</div>
+        </div>
+    </div>
+
+    <!-- Verified Client Reviews -->
+    <section class="reviews-section">
+        <div class="section-title">
+            <h2>Verified Enterprise Reviews</h2>
+            <p style="color:var(--text-muted);">Feedback from global supply chain managers and e-commerce partners.</p>
+        </div>
+
+        <div class="reviews-grid">
+            <div class="review-card">
+                <p class="review-quote">"Swiftora Xpress handled our air freight charter from London (LHR) to Dubai (DXB) flawlessly. Clear customs documentation and accurate real-time GPS telemetry."</p>
+                <div class="review-author">
+                    <div class="author-avatar">MS</div>
+                    <div class="author-info">
+                        <h4>Marcus Sterling</h4>
+                        <p>Global Logistics Director, Apex Tech</p>
+                        <span class="badge-verified"><i class="fa-solid fa-circle-check"></i> Verified Shipment</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="review-card">
+                <p class="review-quote">"Their automated staging terminal in New York shortened our transit window by 36 hours. The live tracking portal kept our client fully informed every step."</p>
+                <div class="review-author">
+                    <div class="author-avatar">EN</div>
+                    <div class="author-info">
+                        <h4>Elena Nnamdi</h4>
+                        <p>Supply Chain Manager, TransGlobal</p>
+                        <span class="badge-verified"><i class="fa-solid fa-circle-check"></i> Verified Shipment</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="review-card">
+                <p class="review-quote">"Priority cold-chain storage for pharmaceuticals was perfectly maintained from Frankfurt to Tokyo. Impressive attention to regulatory customs fast-tracking."</p>
+                <div class="review-author">
+                    <div class="author-avatar">KT</div>
+                    <div class="author-info">
+                        <h4>Kenji Takahashi</h4>
+                        <p>Operations Lead, BioPharma APAC</p>
+                        <span class="badge-verified"><i class="fa-solid fa-circle-check"></i> Verified Shipment</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Support & Ticket Submission Form -->
+    <section class="support-section">
+        <div class="support-card">
+            <h2 style="color:var(--text-heading); font-size:1.8rem; margin-bottom:8px; text-align:center;">Client Support Dispatch</h2>
+            <p style="color:var(--text-muted); text-align:center; font-size:0.95rem;">Have questions regarding a shipment, customs clearance, or express charter pricing? Submit a priority ticket below.</p>
+
+            <div class="alert-success" id="alertSuccess">
+                <i class="fa-solid fa-circle-check"></i> Support ticket logged successfully! Our dispatch team will respond within 15 minutes.
+            </div>
+
+            <form id="supportForm" onsubmit="handleFormSubmit(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>FULL NAME *</label>
+                        <input type="text" class="form-control" placeholder="e.g. John Doe" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>CORPORATE EMAIL *</label>
+                        <input type="email" class="form-control" placeholder="name@company.com" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>WAYBILL / TRACKING NUMBER (OPTIONAL)</label>
+                        <input type="text" class="form-control" placeholder="e.g. SWX-98234-INT">
+                    </div>
+
+                    <div class="form-group">
+                        <label>INQUIRY TYPE</label>
+                        <select class="form-control">
+                            <option>Shipment Tracking Update</option>
+                            <option>Customs Clearance Verification</option>
+                            <option>Charter Rates Inquiry</option>
+                            <option>Corporate Account Onboarding</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label>MESSAGE DETAILS *</label>
+                        <textarea class="form-control" placeholder="Provide details about your package or inquiry..." required></textarea>
+                    </div>
+
+                    <div class="full-width">
+                        <button type="submit" class="btn-submit">Dispatch Priority Support Ticket</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <!-- Floating Action Hub -->
+    <div class="floating-hub">
+        <a href="mailto:swiftoraxpress@gmail.com" class="float-btn float-btn-gmail" aria-label="Email Support">
+            <i class="fa-solid fa-envelope"></i>
+        </a>
+        <div class="float-btn float-btn-chat" id="openChatBtn" aria-label="Open Live Chat">
+            <i class="fa-solid fa-comments"></i>
+        </div>
+    </div>
+
+    <!-- Command HQ Footer -->
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-brand-meta">
+                <a href="index.html" class="logo-container" style="margin-bottom: 16px;">
+                    <img src="swiftoralogo.png" alt="Swiftora Logo" class="header-logo-img">
+                </a>
+                <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom: 20px;">Global aviation cargo chartering, automated warehouse staging, and real-time tracking network for international trade.</p>
+                <div style="display:inline-flex; align-items:center; gap:8px; background:rgba(16, 185, 129, 0.08); border:1px solid rgba(16, 185, 129, 0.2); color:#10B981; padding:6px 12px; border-radius:20px; font-size:0.8rem; font-weight:700;">
+                    <span class="pulse-dot" style="background:#10B981;"></span> Client Support Center Online
+                </div>
+            </div>
+
+            <div class="footer-col">
+                <h4>TERMINAL LINKS</h4>
+                <ul>
+                    <li><a href="index.html#rates">Rates Matrix</a></li>
+                    <li><a href="destination.html">Global Hubs</a></li>
+                    <li><a href="global.html">Global Network</a></li>
+                    <li><a href="customer.html">Customer Trust</a></li>
+                    <li><a href="index.html#track">Direct Tracker</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4>CLIENT SERVICES</h4>
+                <ul>
+                    <li><a href="#">Customs Validation</a></li>
+                    <li><a href="#">Cold-Chain Guidelines</a></li>
+                    <li><a href="#">Flight Schedules</a></li>
+                    <li><a href="#">Security Badges</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4>DISPATCH OPERATIONS</h4>
+                <p style="font-size: 0.85rem; color:#fff; margin-bottom: 6px;">HQ: Logistics Tower, Cargo Gate 4</p>
+                <p style="font-size: 0.85rem; margin-bottom: 8px;">
+                    <a href="mailto:swiftoraxpress@gmail.com" style="color: var(--brand-primary); font-weight:700;">swiftoraxpress@gmail.com</a>
+                </p>
+                <p style="font-size: 0.85rem; color:var(--brand-primary); font-weight:700;">+1 (800) 555-SWIFT</p>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2026 Swiftora Xpress Logistics Inc. All Rights Reserved.</p>
+            <div style="display:flex; gap:16px;">
+                <a href="mailto:swiftoraxpress@gmail.com" style="color:var(--text-muted);"><i class="fa-solid fa-envelope"></i></a>
+                <a href="#" style="color:var(--text-muted);"><i class="fa-brands fa-linkedin"></i></a>
+                <a href="#" style="color:var(--text-muted);"><i class="fa-brands fa-x-twitter"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts Block -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Theme Toggle Logic
+            const themeBtn = document.getElementById('themeBtn');
+            themeBtn.addEventListener('click', () => {
+                const currentTheme = document.documentElement.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                document.documentElement.setAttribute('data-theme', newTheme);
+                themeBtn.innerText = newTheme === 'dark' ? 'Light Mode' : 'Dark Mode';
+            });
+
+            // Tawk.to Chat Trigger
+            const openChatBtn = document.getElementById('openChatBtn');
+            openChatBtn.addEventListener('click', () => {
+                if (typeof Tawk_API !== 'undefined' && Tawk_API.maximize) {
+                    Tawk_API.maximize();
+                }
+            });
+        });
+
+        // Handle Support Ticket Submission
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            const alertSuccess = document.getElementById('alertSuccess');
+            const form = document.getElementById('supportForm');
+            
+            alertSuccess.style.display = 'block';
+            form.reset();
+
+            setTimeout(() => {
+                alertSuccess.style.display = 'none';
+            }, 6000);
+        }
+
+        /* Google Translate Loader */
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'en',
+                includedLanguages: 'en,es,fr,de,zh-CN,ar,ja,pt',
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+            }, 'google_translate_element');
+        }
+    </script>
+    <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</body>
+</html>

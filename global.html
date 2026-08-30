@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Logistics Network & Routing Infrastructure | Swiftora Xpress</title>
+    
+    <!-- External Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.2.3/css/flag-icons.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+    
+    <!-- Tawk.to Live Chat -->
+    <script type="text/javascript">
+    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+    (function(){
+    var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+    s1.async=true;
+    s1.src='https://embed.tawk.to/6a93085b6ad69c344ab8a62d/default';
+    s1.charset='UTF-8';
+    s1.setAttribute('crossorigin','*');
+    s0.parentNode.insertBefore(s1,s0);
+    })();
+    </script>
+    
+    <style>
+        /* ==========================================
+           1. Core Design System & Tokens
+           ========================================== */
+        :root {
+            --bg-main: #050811;
+            --bg-surface: #0E1322;
+            --bg-card: #161C2E;
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --border-accent: rgba(0, 240, 255, 0.4);
+            
+            --brand-primary: #00F0FF;
+            --brand-secondary: #3B82F6;
+            --brand-gradient: linear-gradient(135deg, #00F0FF 0%, #3B82F6 100%);
+            
+            --text-heading: #FFFFFF;
+            --text-body: #94A3B8;
+            --text-muted: #64748B;
+            
+            --shadow-glow: 0 0 30px rgba(0, 240, 255, 0.18);
+            --shadow-card: 0 20px 40px -15px rgba(0, 0, 0, 0.7);
+            --radius-sm: 6px;
+            --radius-md: 12px;
+            --radius-lg: 20px;
+        }
+
+        [data-theme="light"] {
+            --bg-main: #F1F5F9;
+            --bg-surface: #FFFFFF;
+            --bg-card: #E2E8F0;
+            --border-subtle: rgba(0, 0, 0, 0.08);
+            --border-accent: rgba(59, 130, 246, 0.3);
+            
+            --text-heading: #0F172A;
+            --text-body: #334155;
+            --text-muted: #64748B;
+            
+            --shadow-glow: 0 0 25px rgba(59, 130, 246, 0.12);
+            --shadow-card: 0 20px 40px -15px rgba(0, 0, 0, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Space Grotesk', system-ui, -apple-system, sans-serif;
+            transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+        }
+
+        h1, h2, h3, h4, .font-heading {
+            font-family: 'Syne', sans-serif;
+        }
+
+        html { scroll-behavior: smooth; }
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-body);
+            line-height: 1.6;
+            overflow-x: hidden;
+            top: 0px !important;
+        }
+
+        /* Third-Party Overrides */
+        .goog-te-banner-frame, .goog-te-gadget-icon { display: none !important; }
+        .goog-te-gadget { color: transparent !important; font-size: 0 !important; }
+        #google_translate_element { display: inline-block; }
+        #google_translate_element select {
+            background: var(--bg-card);
+            color: var(--text-heading);
+            border: 1px solid var(--border-subtle);
+            padding: 8px 12px;
+            border-radius: var(--radius-sm);
+            outline: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* ==========================================
+           2. Glass Header
+           ========================================== */
+        header {
+            position: fixed;
+            top: 15px;
+            left: 4%;
+            right: 4%;
+            background: rgba(14, 19, 34, 0.88);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 10px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: var(--shadow-card);
+        }
+
+        [data-theme="light"] header { background: rgba(255, 255, 255, 0.9); }
+
+        .logo-container { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+        .header-logo-img { height: 42px; width: auto; object-fit: contain; }
+
+        .nav-links { display: flex; gap: 28px; list-style: none; }
+        .nav-links a { color: var(--text-body); text-decoration: none; font-weight: 600; font-size: 0.9rem; }
+        .nav-links a:hover, .nav-links a.active { color: var(--brand-primary); }
+
+        .header-controls { display: flex; align-items: center; gap: 12px; }
+        .btn-theme {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-heading);
+            padding: 8px 14px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        /* ==========================================
+           3. Hero Section
+           ========================================== */
+        .global-hero {
+            padding: 150px 4% 60px 4%;
+            background: radial-gradient(circle at 50% 30%, rgba(0, 240, 255, 0.1) 0%, transparent 70%);
+            text-align: center;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(0, 240, 255, 0.08);
+            border: 1px solid var(--border-accent);
+            color: var(--brand-primary);
+            padding: 6px 18px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--brand-primary);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--brand-primary);
+        }
+
+        .global-hero h1 {
+            font-size: 3.2rem;
+            color: var(--text-heading);
+            margin-bottom: 16px;
+        }
+
+        .global-hero h1 span {
+            background: var(--brand-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .global-hero p {
+            max-width: 700px;
+            margin: 0 auto;
+            color: var(--text-body);
+            font-size: 1.1rem;
+        }
+
+        /* ==========================================
+           4. Real-time Infrastructure Metrics
+           ========================================== */
+        .metrics-bar {
+            max-width: 1300px;
+            margin: 0 auto 60px auto;
+            padding: 0 4%;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+        }
+
+        .metric-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            padding: 24px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            box-shadow: var(--shadow-card);
+        }
+
+        .metric-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: var(--radius-sm);
+            background: rgba(0, 240, 255, 0.1);
+            color: var(--brand-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+        }
+
+        .metric-val { font-size: 1.8rem; font-weight: 800; color: var(--text-heading); font-family: 'Syne', sans-serif; }
+        .metric-label { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; }
+
+        /* ==========================================
+           5. Interactive Flight Route Console
+           ========================================== */
+        .route-console-section {
+            max-width: 1300px;
+            margin: 0 auto 80px auto;
+            padding: 0 4%;
+        }
+
+        .console-container {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-accent);
+            border-radius: var(--radius-lg);
+            padding: 30px;
+            box-shadow: var(--shadow-card);
+        }
+
+        .console-title {
+            color: var(--text-heading);
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .route-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr 180px;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            font-weight: 700;
+        }
+
+        .input-group select {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-sm);
+            color: var(--text-heading);
+            font-weight: 600;
+            outline: none;
+        }
+
+        .btn-route {
+            background: var(--brand-gradient);
+            border: none;
+            color: #000;
+            font-weight: 800;
+            padding: 12px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            align-self: flex-end;
+            text-align: center;
+        }
+
+        .btn-route:hover {
+            box-shadow: var(--shadow-glow);
+        }
+
+        .route-result {
+            background: var(--bg-card);
+            border: 1px dashed var(--border-accent);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            display: none;
+        }
+
+        /* ==========================================
+           6. Regional Dispatch Matrix
+           ========================================== */
+        .regions-section {
+            max-width: 1300px;
+            margin: 0 auto 100px auto;
+            padding: 0 4%;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .section-header h2 {
+            font-size: 2.2rem;
+            color: var(--text-heading);
+            margin-bottom: 10px;
+        }
+
+        .region-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+            gap: 24px;
+        }
+
+        .region-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 28px;
+            box-shadow: var(--shadow-card);
+        }
+
+        .region-card:hover {
+            border-color: var(--brand-primary);
+        }
+
+        .region-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .region-name { font-size: 1.3rem; color: var(--text-heading); font-weight: 700; }
+        .region-badge { font-size: 0.75rem; background: rgba(0, 240, 255, 0.1); color: var(--brand-primary); padding: 4px 10px; border-radius: 20px; font-weight: 700; }
+
+        .region-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            font-size: 0.9rem;
+        }
+
+        .region-list li {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* ==========================================
+           7. Floating Action Hub & Footer
+           ========================================== */
+        .floating-hub {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            z-index: 99999;
+        }
+
+        .float-btn {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #FFFFFF;
+            text-decoration: none;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .float-btn-gmail { background: linear-gradient(135deg, #EA4335 0%, #BB001B 100%); }
+        .float-btn-chat { background: linear-gradient(135deg, #00F0FF 0%, #3B82F6 100%); color: #000; }
+
+        footer {
+            background: #03060D;
+            border-top: 1px solid var(--border-subtle);
+            padding: 80px 4% 30px 4%;
+            margin-top: 120px;
+        }
+
+        .footer-grid {
+            max-width: 1300px;
+            margin: 0 auto 60px auto;
+            display: grid;
+            grid-template-columns: 1.8fr repeat(3, 1fr);
+            gap: 40px;
+        }
+
+        .footer-col h4 { color: var(--text-heading); font-size: 1rem; margin-bottom: 20px; font-weight: 700; }
+        .footer-col ul { list-style: none; }
+        .footer-col li { margin-bottom: 12px; }
+        .footer-col a { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; }
+        .footer-col a:hover { color: var(--brand-primary); }
+
+        .footer-bottom {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding-top: 30px;
+            border-top: 1px solid var(--border-subtle);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .global-hero h1 { font-size: 2.3rem; }
+            .route-inputs { grid-template-columns: 1fr; }
+            .footer-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Glass Navigation Header -->
+    <header>
+        <a href="index.html" class="logo-container">
+            <img src="swiftoralogo.png" alt="Swiftora Xpress Logo" class="header-logo-img">
+        </a>
+
+        <ul class="nav-links">
+            <li><a href="index.html#rates">Destination Rates</a></li>
+            <li><a href="destination.html">Global Hubs</a></li>
+            <li><a href="global.html" class="active">Global Network</a></li>
+            <li><a href="index.html#track">Tracking Portal</a></li>
+        </ul>
+
+        <div class="header-controls">
+            <div id="google_translate_element"></div>
+            <button class="btn-theme" id="themeBtn">Light Mode</button>
+        </div>
+    </header>
+
+    <!-- Global Hero Header -->
+    <section class="global-hero">
+        <div class="hero-badge">
+            <span class="pulse-dot"></span> Live Air Charter & Cargo Routing Engine
+        </div>
+        <h1>Cross-Border <span>Network Topology</span></h1>
+        <p>Connecting 220+ territories through high-speed air cargo corridors, automated sorting centers, and priority customs gateways.</p>
+    </section>
+
+    <!-- Real-time Infrastructure Metrics -->
+    <div class="metrics-bar">
+        <div class="metric-card">
+            <div class="metric-icon"><i class="fa-solid fa-plane-departure"></i></div>
+            <div>
+                <div class="metric-val">1,480+</div>
+                <div class="metric-label">Daily Flight Charters</div>
+            </div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-icon"><i class="fa-solid fa-warehouse"></i></div>
+            <div>
+                <div class="metric-val">190+</div>
+                <div class="metric-label">Smart Cargo Hubs</div>
+            </div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-icon"><i class="fa-solid fa-globe"></i></div>
+            <div>
+                <div class="metric-val">220+</div>
+                <div class="metric-label">Countries & Territories</div>
+            </div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-icon"><i class="fa-solid fa-shield-halved"></i></div>
+            <div>
+                <div class="metric-val">99.8%</div>
+                <div class="metric-label">Customs Clearance Rate</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Interactive Flight Route Console -->
+    <section class="route-console-section">
+        <div class="console-container">
+            <div class="console-title">
+                <i class="fa-solid fa-route" style="color:var(--brand-primary);"></i>
+                Interactive Global Air Corridor Simulator
+            </div>
+
+            <div class="route-inputs">
+                <div class="input-group">
+                    <label>ORIGIN TERMINAL</label>
+                    <select id="originNode">
+                        <option value="JFK">New York, USA (JFK Gate 4)</option>
+                        <option value="LHR">London, UK (LHR Hub 1)</option>
+                        <option value="FRA">Frankfurt, DE (FRA Cargo Core)</option>
+                        <option value="DXB">Dubai, UAE (DXB Logistics City)</option>
+                        <option value="HND">Tokyo, JP (HND APAC Gateway)</option>
+                        <option value="LOS">Lagos, NG (LOS Murtala Cargo)</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label>DESTINATION TERMINAL</label>
+                    <select id="destNode">
+                        <option value="DXB">Dubai, UAE (DXB Logistics City)</option>
+                        <option value="JFK">New York, USA (JFK Gate 4)</option>
+                        <option value="LHR">London, UK (LHR Hub 1)</option>
+                        <option value="FRA">Frankfurt, DE (FRA Cargo Core)</option>
+                        <option value="HND">Tokyo, JP (HND APAC Gateway)</option>
+                        <option value="LOS">Lagos, NG (LOS Murtala Cargo)</option>
+                    </select>
+                </div>
+
+                <button class="btn-route" id="calculateRouteBtn">Calculate Flight Corridor</button>
+            </div>
+
+            <div class="route-result" id="routeResult">
+                <!-- Calculated flight path dynamically populated via JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Regional Dispatch Matrix -->
+    <section class="regions-section">
+        <div class="section-header">
+            <h2>Primary Continental Corridors</h2>
+            <p style="color:var(--text-muted);">Standard transit timetables across active international flight zones.</p>
+        </div>
+
+        <div class="region-grid">
+            <div class="region-card">
+                <div class="region-card-header">
+                    <span class="region-name"><span class="fi fi-us"></span> North America Air Corridor</span>
+                    <span class="region-badge">Express Active</span>
+                </div>
+                <ul class="region-list">
+                    <li><span>USA to EU Hubs</span> <strong>24 - 48 Hrs</strong></li>
+                    <li><span>USA to APAC Gateway</span> <strong>48 - 72 Hrs</strong></li>
+                    <li><span>Canada Cold-Chain Link</span> <strong>24 - 36 Hrs</strong></li>
+                    <li><span>Customs Protocol</span> <strong>Automated EDI</strong></li>
+                </ul>
+            </div>
+
+            <div class="region-card">
+                <div class="region-card-header">
+                    <span class="region-name"><span class="fi fi-gb"></span> European Logistics Spine</span>
+                    <span class="region-badge">Express Active</span>
+                </div>
+                <ul class="region-list">
+                    <li><span>UK to Middle East Hubs</span> <strong>24 - 48 Hrs</strong></li>
+                    <li><span>Frankfurt to Asia Cargo</span> <strong>36 - 60 Hrs</strong></li>
+                    <li><span>EU Intra-City Charter</span> <strong>Same-Day / 12 Hrs</strong></li>
+                    <li><span>Customs Protocol</span> <strong>Priority Fast-Track</strong></li>
+                </ul>
+            </div>
+
+            <div class="region-card">
+                <div class="region-card-header">
+                    <span class="region-name"><span class="fi fi-ae"></span> Middle East & Africa Trade Ring</span>
+                    <span class="region-badge">Express Active</span>
+                </div>
+                <ul class="region-list">
+                    <li><span>Dubai to West Africa Node</span> <strong>24 - 48 Hrs</strong></li>
+                    <li><span>UAE to North America Air</span> <strong>48 - 72 Hrs</strong></li>
+                    <li><span>Lagos / Abuja Sorting Gate</span> <strong>Express Staging</strong></li>
+                    <li><span>Customs Protocol</span> <strong>Pre-Cleared Escort</strong></li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Floating Action Hub -->
+    <div class="floating-hub">
+        <a href="mailto:swiftoraxpress@gmail.com" class="float-btn float-btn-gmail" aria-label="Email Dispatch">
+            <i class="fa-solid fa-envelope"></i>
+        </a>
+        <div class="float-btn float-btn-chat" id="openChatBtn" aria-label="Open Live Chat">
+            <i class="fa-solid fa-comments"></i>
+        </div>
+    </div>
+
+    <!-- Command HQ Footer -->
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-brand-meta">
+                <a href="index.html" class="logo-container" style="margin-bottom: 16px;">
+                    <img src="swiftoralogo.png" alt="Swiftora Logo" class="header-logo-img">
+                </a>
+                <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom: 20px;">Global aviation cargo chartering, automated warehouse staging, and real-time tracking network for international trade.</p>
+                <div style="display:inline-flex; align-items:center; gap:8px; background:rgba(16, 185, 129, 0.08); border:1px solid rgba(16, 185, 129, 0.2); color:#10B981; padding:6px 12px; border-radius:20px; font-size:0.8rem; font-weight:700;">
+                    <span class="pulse-dot" style="background:#10B981;"></span> Global Flight Routing Network Active
+                </div>
+            </div>
+
+            <div class="footer-col">
+                <h4>TERMINAL LINKS</h4>
+                <ul>
+                    <li><a href="index.html#rates">Rates Matrix</a></li>
+                    <li><a href="destination.html">Global Hubs</a></li>
+                    <li><a href="global.html">Global Network</a></li>
+                    <li><a href="index.html#track">Direct Tracker</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4>CLIENT SERVICES</h4>
+                <ul>
+                    <li><a href="#">Customs Validation</a></li>
+                    <li><a href="#">Cold-Chain Guidelines</a></li>
+                    <li><a href="#">Flight Schedules</a></li>
+                    <li><a href="#">Security Badges</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4>DISPATCH OPERATIONS</h4>
+                <p style="font-size: 0.85rem; color:#fff; margin-bottom: 6px;">HQ: Logistics Tower, Cargo Gate 4</p>
+                <p style="font-size: 0.85rem; margin-bottom: 8px;">
+                    <a href="mailto:swiftoraxpress@gmail.com" style="color: var(--brand-primary); font-weight:700;">swiftoraxpress@gmail.com</a>
+                </p>
+                <p style="font-size: 0.85rem; color:var(--brand-primary); font-weight:700;">+1 (800) 555-SWIFT</p>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2026 Swiftora Xpress Logistics Inc. All Rights Reserved.</p>
+            <div style="display:flex; gap:16px;">
+                <a href="mailto:swiftoraxpress@gmail.com" style="color:var(--text-muted);"><i class="fa-solid fa-envelope"></i></a>
+                <a href="#" style="color:var(--text-muted);"><i class="fa-brands fa-linkedin"></i></a>
+                <a href="#" style="color:var(--text-muted);"><i class="fa-brands fa-x-twitter"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts Block -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Theme Toggle Logic
+            const themeBtn = document.getElementById('themeBtn');
+            themeBtn.addEventListener('click', () => {
+                const currentTheme = document.documentElement.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                document.documentElement.setAttribute('data-theme', newTheme);
+                themeBtn.innerText = newTheme === 'dark' ? 'Light Mode' : 'Dark Mode';
+            });
+
+            // Interactive Flight Corridor Calculator
+            const calculateRouteBtn = document.getElementById('calculateRouteBtn');
+            const routeResult = document.getElementById('routeResult');
+
+            calculateRouteBtn.addEventListener('click', () => {
+                const origin = document.getElementById('originNode').value;
+                const dest = document.getElementById('destNode').value;
+
+                if(origin === dest) {
+                    routeResult.style.display = 'block';
+                    routeResult.innerHTML = `<span style="color:#EF4444; font-weight:700;">Origin and Destination terminals cannot be identical. Please select distinct hubs.</span>`;
+                    return;
+                }
+
+                routeResult.style.display = 'block';
+                routeResult.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                        <h4 style="color:var(--brand-primary); font-size:1.1rem;">Flight Corridor: ${origin} &rarr; ${dest}</h4>
+                        <span style="background:rgba(16, 185, 129, 0.1); color:#10B981; padding:4px 10px; border-radius:20px; font-size:0.8rem; font-weight:700;">Route Open</span>
+                    </div>
+                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:12px; font-size:0.9rem;">
+                        <div><span style="color:var(--text-muted);">Est. Transit Time:</span> <br><strong style="color:var(--text-heading);">24 - 36 Hours</strong></div>
+                        <div><span style="color:var(--text-muted);">Air Charter Type:</span> <br><strong style="color:var(--text-heading);">Boeing 777F Direct</strong></div>
+                        <div><span style="color:var(--text-muted);">Customs Terminal:</span> <br><strong style="color:var(--text-heading);">Expedited Clearance Gate</strong></div>
+                    </div>
+                `;
+            });
+
+            // Tawk.to Chat Trigger
+            const openChatBtn = document.getElementById('openChatBtn');
+            openChatBtn.addEventListener('click', () => {
+                if (typeof Tawk_API !== 'undefined' && Tawk_API.maximize) {
+                    Tawk_API.maximize();
+                }
+            });
+        });
+
+        /* Google Translate Loader */
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'en',
+                includedLanguages: 'en,es,fr,de,zh-CN,ar,ja,pt',
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+            }, 'google_translate_element');
+        }
+    </script>
+    <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</body>
+</html>
