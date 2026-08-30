@@ -610,278 +610,302 @@
     </script>
     <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+   <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyBMn0Gf5Eyyy1CHF2zloLGL2kh0zsQ83vo",
-            authDomain: "swiftora-1fe3d.firebaseapp.com",
-            projectId: "swiftora-1fe3d",
-            storageBucket: "swiftora-1fe3d.firebasestorage.app",
-            messagingSenderId: "93504371995",
-            appId: "1:93504371995:web:84665487d19c67bdea27be"
-        };
+    const firebaseConfig = {
+        apiKey: "AIzaSyBMn0Gf5Eyyy1CHF2zloLGL2kh0zsQ83vo",
+        authDomain: "swiftora-1fe3d.firebaseapp.com",
+        projectId: "swiftora-1fe3d",
+        storageBucket: "swiftora-1fe3d.firebasestorage.app",
+        messagingSenderId: "93504371995",
+        appId: "1:93504371995:web:84665487d19c67bdea27be"
+    };
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-        let liveShipmentData = null;
-        let currentTrackingId = "";
+    let liveShipmentData = null;
+    let currentTrackingId = "";
 
-        window.addEventListener('DOMContentLoaded', async () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            currentTrackingId = urlParams.get('id');
-            const displayIdEl = document.getElementById('displayTrackingId');
+    window.addEventListener('DOMContentLoaded', async () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        currentTrackingId = urlParams.get('id');
+        const displayIdEl = document.getElementById('displayTrackingId');
 
-            if (!currentTrackingId) {
-                displayIdEl.innerText = "NO-TRACKING-ID";
-                return;
+        if (!currentTrackingId) {
+            displayIdEl.innerText = "NO-TRACKING-ID";
+            return;
+        }
+
+        displayIdEl.innerText = currentTrackingId;
+
+        try {
+            const docRef = doc(db, "shipments", currentTrackingId);
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+                liveShipmentData = docSnap.data();
+                populateDetails(liveShipmentData);
+                calculateAndRenderTimeline(liveShipmentData);
+            } else {
+                displayIdEl.innerText = `${currentTrackingId} (Not Found)`;
             }
+        } catch (err) {
+            console.error("Firestore error:", err);
+        }
+    });
 
-            displayIdEl.innerText = currentTrackingId;
+    function populateDetails(data) {
+        if (data.deliveryCompanyName) {
+            document.getElementById('carrierInfo').innerText = `${data.deliveryCompanyName} | ${data.deliveryCompanyAddress || ''} | ${data.deliveryCompanyPhone || ''}`;
+        }
 
-            try {
-                const docRef = doc(db, "shipments", currentTrackingId);
-                const docSnap = await getDoc(docRef);
+        document.getElementById('sName').innerText = data.senderFullName || "--";
+        document.getElementById('sAddr').innerText = data.senderAddress || "--";
+        document.getElementById('sLoc').innerText = data.senderCurrentLocation || "--";
+        document.getElementById('sPassport').innerText = data.senderPassportId || "--";
+        document.getElementById('sSSN').innerText = data.senderSSN || "N/A";
 
-                if (docSnap.exists()) {
-                    liveShipmentData = docSnap.data();
-                    populateDetails(liveShipmentData);
-                    calculateAndRenderTimeline(liveShipmentData);
-                } else {
-                    displayIdEl.innerText = `${currentTrackingId} (Not Found)`;
-                }
-            } catch (err) {
-                console.error("Firestore error:", err);
+        document.getElementById('rName').innerText = data.receiverFullName || "--";
+        document.getElementById('rCountryState').innerText = `${data.countryOfDestination || '--'} (${data.receiverState || '--'})`;
+        document.getElementById('rAddr').innerText = data.receiverHouseAddress || "--";
+        document.getElementById('rEmail').innerText = data.receiverEmail || "--";
+        document.getElementById('rPhone').innerText = data.receiverPhone || "--";
+        document.getElementById('rSocialPhone').innerText = data.receiverSocialPhone || "--";
+
+        document.getElementById('pkgDesc').innerText = data.packageName || "--";
+        document.getElementById('pkgWeight').innerText = data.packageWeight || "--";
+        document.getElementById('dispatchDate').innerText = data.dateOfSent ? new Date(data.dateOfSent).toLocaleString() : "--";
+        document.getElementById('etaDate').innerText = data.dateToBeReceived ? new Date(data.dateToBeReceived).toLocaleString() : "--";
+
+        document.getElementById('rcptValue').innerText = data.totalCostOfPackage || "$0.00";
+        document.getElementById('rcptCustomsFee').innerText = data.customClearanceFee || "$0.00";
+        document.getElementById('rcptTotalCost').innerText = data.totalCostOfPackage || "$0.00";
+    }
+
+    function calculateAndRenderTimeline(data) {
+        const sendTime = data.dateOfSent ? new Date(data.dateOfSent).getTime() : Date.now();
+        const now = Date.now();
+        const elapsedMinutes = Math.floor((now - sendTime) / (1000 * 60));
+
+        const isCustomHold = data.customHold === true || data.customHold === "true";
+        const arrivedDestination = data.arrivedAtDestination === true || data.arrivedAtDestination === "true";
+        const customsFee = data.customClearanceFee || "$0.00";
+
+        const pipeline = [
+            { name: "Picked by Courier", delay: 0, icon: "fa-box" },
+            { name: "Picked & Ready for Shipping", delay: 10, icon: "fa-dolly" },
+            { name: "Package Left Country of Origin", delay: 30, icon: "fa-plane-departure" },
+            { name: `In Flight Transit to ${data.countryOfDestination || 'Destination'} ✈️`, delay: 120, icon: "fa-plane" },
+            { name: `Arrived at Country of Destination (${data.countryOfDestination || 'Hub'})`, delay: 1440, forceTrigger: arrivedDestination, icon: "fa-plane-arrival" },
+            { name: "Customs Hold Inspection", delay: 1500, forceTrigger: isCustomHold, icon: "fa-shield-cat" },
+            { name: "Customs Clearance Fee Active", delay: 1520, forceTrigger: isCustomHold, icon: "fa-triangle-exclamation" }
+        ];
+
+        const container = document.getElementById('timeline');
+        const statusBadge = document.getElementById('statusBadge');
+        container.innerHTML = "";
+
+        let currentActiveIndex = 0;
+
+        pipeline.forEach((step, idx) => {
+            if (step.forceTrigger || elapsedMinutes >= step.delay) {
+                currentActiveIndex = idx;
             }
         });
 
-        function populateDetails(data) {
-            if (data.deliveryCompanyName) {
-                document.getElementById('carrierInfo').innerText = `${data.deliveryCompanyName} | ${data.deliveryCompanyAddress || ''} | ${data.deliveryCompanyPhone || ''}`;
-            }
+        pipeline.forEach((step, idx) => {
+            const stepEl = document.createElement('div');
+            const isCompleted = idx < currentActiveIndex;
+            const isActive = idx === currentActiveIndex;
+            const isHoldStep = (step.name.includes("Customs Hold") || step.name.includes("Clearance Fee")) && isCustomHold;
 
-            document.getElementById('sName').innerText = data.senderFullName || "--";
-            document.getElementById('sAddr').innerText = data.senderAddress || "--";
-            document.getElementById('sLoc').innerText = data.senderCurrentLocation || "--";
-            document.getElementById('sPassport').innerText = data.senderPassportId || "--";
-            document.getElementById('sSSN').innerText = data.senderSSN || "N/A";
+            let stateClass = "";
+            let tagMarkup = "";
 
-            document.getElementById('rName').innerText = data.receiverFullName || "--";
-            document.getElementById('rCountryState').innerText = `${data.countryOfDestination || '--'} (${data.receiverState || '--'})`;
-            document.getElementById('rAddr').innerText = data.receiverHouseAddress || "--";
-            document.getElementById('rEmail').innerText = data.receiverEmail || "--";
-            document.getElementById('rPhone').innerText = data.receiverPhone || "--";
-            document.getElementById('rSocialPhone').innerText = data.receiverSocialPhone || "--";
-
-            document.getElementById('pkgDesc').innerText = data.packageName || "--";
-            document.getElementById('pkgWeight').innerText = data.packageWeight || "--";
-            document.getElementById('dispatchDate').innerText = data.dateOfSent ? new Date(data.dateOfSent).toLocaleString() : "--";
-            document.getElementById('etaDate').innerText = data.dateToBeReceived ? new Date(data.dateToBeReceived).toLocaleString() : "--";
-
-            document.getElementById('rcptValue').innerText = data.totalCostOfPackage || "$0.00";
-            document.getElementById('rcptCustomsFee').innerText = data.customClearanceFee || "$0.00";
-            document.getElementById('rcptTotalCost').innerText = data.totalCostOfPackage || "$0.00";
-        }
-
-        function calculateAndRenderTimeline(data) {
-            const sendTime = data.dateOfSent ? new Date(data.dateOfSent).getTime() : Date.now();
-            const now = Date.now();
-            const elapsedMinutes = Math.floor((now - sendTime) / (1000 * 60));
-
-            const isCustomHold = data.customHold === true || data.customHold === "true";
-            const arrivedDestination = data.arrivedAtDestination === true || data.arrivedAtDestination === "true";
-            const customsFee = data.customClearanceFee || "$0.00";
-
-            const pipeline = [
-                { name: "Picked by Courier", delay: 0, icon: "fa-box" },
-                { name: "Picked & Ready for Shipping", delay: 10, icon: "fa-dolly" },
-                { name: "Package Left Country of Origin", delay: 30, icon: "fa-plane-departure" },
-                { name: `In Flight Transit to ${data.countryOfDestination || 'Destination'} ✈️`, delay: 120, icon: "fa-plane" },
-                { name: `Arrived at Country of Destination (${data.countryOfDestination || 'Hub'})`, delay: 1440, forceTrigger: arrivedDestination, icon: "fa-plane-arrival" },
-                { name: "Customs Hold Inspection", delay: 1500, forceTrigger: isCustomHold, icon: "fa-shield-cat" },
-                { name: "Customs Clearance Fee Active", delay: 1520, forceTrigger: isCustomHold, icon: "fa-triangle-exclamation" }
-            ];
-
-            const container = document.getElementById('timeline');
-            const statusBadge = document.getElementById('statusBadge');
-            container.innerHTML = "";
-
-            let currentActiveIndex = 0;
-
-            pipeline.forEach((step, idx) => {
-                if (step.forceTrigger || elapsedMinutes >= step.delay) {
-                    currentActiveIndex = idx;
-                }
-            });
-
-            pipeline.forEach((step, idx) => {
-                const stepEl = document.createElement('div');
-                const isCompleted = idx < currentActiveIndex;
-                const isActive = idx === currentActiveIndex;
-                const isHoldStep = (step.name.includes("Customs Hold") || step.name.includes("Clearance Fee")) && isCustomHold;
-
-                let stateClass = "";
-                let tagMarkup = "";
-
-                if (isCompleted) {
-                    stateClass = "completed";
-                    tagMarkup = `<span class="tag-status tag-completed">Completed</span>`;
-                } else if (isActive) {
-                    if (isHoldStep) {
-                        stateClass = "active-hold";
-                        tagMarkup = `<span class="tag-status tag-hold">Hold Active - Action Required</span>`;
-                    } else {
-                        stateClass = "active-transit";
-                        tagMarkup = `<span class="tag-status tag-transit">In Progress ✈️</span>`;
-                    }
+            if (isCompleted) {
+                stateClass = "completed";
+                tagMarkup = `<span class="tag-status tag-completed">Completed</span>`;
+            } else if (isActive) {
+                if (isHoldStep) {
+                    stateClass = "active-hold";
+                    tagMarkup = `<span class="tag-status tag-hold">Hold Active - Action Required</span>`;
                 } else {
-                    tagMarkup = `<span class="tag-status" style="background:var(--bg-card); color:var(--text-muted);">Pending</span>`;
+                    stateClass = "active-transit";
+                    tagMarkup = `<span class="tag-status tag-transit">In Progress ✈️</span>`;
                 }
-
-                stepEl.className = `timeline-step ${stateClass}`;
-                stepEl.innerHTML = `
-                    <div class="node-icon">
-                        <i class="fa-solid ${isCompleted ? 'fa-check' : (isActive && isHoldStep ? 'fa-triangle-exclamation' : step.icon)}"></i>
-                    </div>
-                    <div class="node-details">
-                        <h4>${step.name}</h4>
-                        <p>${isActive ? 'Active Real-Time Waypoint Status' : (isCompleted ? 'Passed Telemetry Point' : 'Awaiting Aircraft Vector')}</p>
-                        ${tagMarkup}
-                    </div>
-                `;
-                container.appendChild(stepEl);
-            });
-
-            if (isCustomHold && currentActiveIndex >= 5) {
-                statusBadge.className = "status-badge hold";
-                statusBadge.innerHTML = `<span class="pulse-dot pulse-red"></span> Action Required: Customs Clearance Pending`;
-                document.getElementById('customsAlert').style.display = 'flex';
-                document.getElementById('customsFeeAmount').innerText = customsFee;
             } else {
-                statusBadge.className = "status-badge transit";
-                statusBadge.innerHTML = `<span class="pulse-dot pulse-blue"></span> Active Flight Transit In Progress`;
-                document.getElementById('customsAlert').style.display = 'none';
-            }
-        }
-
-        // Generate PDF Receipt with Stamp, Signature and "FULLY PAID" Watermark
-        document.getElementById('downloadPdfBtn').addEventListener('click', () => {
-            if (!liveShipmentData) {
-                alert("Shipment record loading... please try again in a moment.");
-                return;
+                tagMarkup = `<span class="tag-status" style="background:var(--bg-card); color:var(--text-muted);">Pending</span>`;
             }
 
-            const d = liveShipmentData;
-            
-            const pdfContainer = document.createElement('div');
-            pdfContainer.style.padding = '30px';
-            pdfContainer.style.backgroundColor = '#ffffff';
-            pdfContainer.style.color = '#000000';
-            pdfContainer.style.fontFamily = 'Arial, sans-serif';
-            pdfContainer.style.position = 'relative';
-            pdfContainer.style.overflow = 'hidden';
-
-            pdfContainer.innerHTML = `
-                <div style="position: absolute; top: 38%; left: 10%; transform: rotate(-30deg); font-size: 75px; font-weight: 900; color: rgba(16, 185, 129, 0.15); border: 10px solid rgba(16, 185, 129, 0.15); padding: 10px 30px; text-transform: uppercase; border-radius: 15px; pointer-events: none; z-index: 1;">
-                    FULLY PAID
+            stepEl.className = `timeline-step ${stateClass}`;
+            stepEl.innerHTML = `
+                <div class="node-icon">
+                    <i class="fa-solid ${isCompleted ? 'fa-check' : (isActive && isHoldStep ? 'fa-triangle-exclamation' : step.icon)}"></i>
                 </div>
-
-                <div style="border-bottom: 2px solid #00F0FF; padding-bottom: 15px; margin-bottom: 20px; position: relative; z-index: 2;">
-                    <h2 style="color: #0088CC; margin: 0; font-size: 24px; font-weight: 800;">SWIFTORA XPRESS LOGISTICS</h2>
-                    <p style="margin: 3px 0 0 0; color: #555; font-size: 13px;">Official Consignment Waybill & Freight Clearance Receipt</p>
-                    <p style="margin: 5px 0 0 0; font-weight: bold; font-size: 14px; color: #111;">Tracking Waybill ID: ${currentTrackingId}</p>
-                </div>
-
-                <div style="margin-bottom: 20px; position: relative; z-index: 2;">
-                    <h3 style="background: #f0f4f8; padding: 6px 10px; margin: 0 0 10px 0; font-size: 13px; color: #333; font-weight: 700;">1. CARRIER & SERVICE COMPANY</h3>
-                    <table style="width: 100%; font-size: 11px; border-collapse: collapse;">
-                        <tr><td style="padding: 4px; font-weight: bold; width: 35%;">Delivery Company:</td><td style="padding: 4px;">${d.deliveryCompanyName || 'Swiftora Xpress Terminal'}</td></tr>
-                        <tr><td style="padding: 4px; font-weight: bold;">Company Address:</td><td style="padding: 4px;">${d.deliveryCompanyAddress || 'Global Freight Gateway Station'}</td></tr>
-                        <tr><td style="padding: 4px; font-weight: bold;">Company Direct Contact:</td><td style="padding: 4px;">${d.deliveryCompanyPhone || '+1 (800) SWIFTORA'}</td></tr>
-                    </table>
-                </div>
-
-                <div style="margin-bottom: 20px; position: relative; z-index: 2;">
-                    <h3 style="background: #f0f4f8; padding: 6px 10px; margin: 0 0 10px 0; font-size: 13px; color: #333; font-weight: 700;">2. CONSIGNMENT SPECIFICATIONS</h3>
-                    <table style="width: 100%; font-size: 11px; border-collapse: collapse;">
-                        <tr><td style="padding: 4px; font-weight: bold; width: 35%;">Item Description:</td><td style="padding: 4px;">${d.packageName || 'N/A'}</td></tr>
-                        <tr><td style="padding: 4px; font-weight: bold;">Freight Mass / Weight:</td><td style="padding: 4px;">${d.packageWeight || 'N/A'}</td></tr>
-                        <tr><td style="padding: 4px; font-weight: bold;">Dispatch Date:</td><td style="padding: 4px;">${d.dateOfSent ? new Date(d.dateOfSent).toLocaleString() : 'N/A'}</td></tr>
-                        <tr><td style="padding: 4px; font-weight: bold;">Estimated Arrival (ETA):</td><td style="padding: 4px;">${d.dateToBeReceived ? new Date(d.dateToBeReceived).toLocaleString() : 'N/A'}</td></tr>
-                    </table>
-                </div>
-
-                <div style="margin-bottom: 20px; position: relative; z-index: 2;">
-                    <h3 style="background: #f0f4f8; padding: 6px 10px; margin: 0 0 10px 0; font-size: 13px; color: #333; font-weight: 700;">3. ORIGIN & SHIPPER DETAILS</h3>
-                    <table style="width: 100%; font-size: 11px; border-collapse: collapse;">
-                        <tr><td style="padding: 4px; font-weight: bold; width: 35%;">Shipper Full Name:</td><td style="padding: 4px;">${d.senderFullName || 'N/A'}</td></tr>
-                        <tr><td style="padding: 4px; font-weight: bold;">Dispatch Address:</td><td style="padding: 4px;">${d.senderAddress || 'N/A'}</td></tr>
-                        <tr><td style="padding: 4px; font-weight: bold;">Current Location:</td><td style="padding: 4px;">${d.senderCurrentLocation || 'N/A'}</td></tr>
-                        <tr><td style="padding: 4px; font-weight: bold;">Passport ID:</td><td style="padding: 4px;">${d.senderPassportId || 'N/A'}</td></tr>
-                        <tr><td style="padding: 4px; font-weight: bold;">Sender SSN:</td><td style="padding: 4px;">${d.senderSSN || 'N/A'}</td></tr>
-                    </table>
-                </div>
-
-                <div style="margin-bottom: 20px; position: relative; z-index: 2;">
-                    <h3 style="background: #f0f4f8; padding: 6px 10px; margin: 0 0 10px 0; font-size: 13px; color: #333; font-weight: 700;">4. CONSIGNEE / RECEIVER RECORDS</h3>
-                    <table style="width: 100%; font-size: 11px; border-collapse: collapse;">
-                        <tr><td style="padding: 4px; font-weight: bold; width: 35%;">Receiver Full Name:</td><td style="padding: 4px;">${d.receiverFullName || 'N/A'}</td></tr>
-                        <tr><td style="padding: 4px; font-weight: bold;">Destination Country/State:</td><td style="padding: 4px;">${d.countryOfDestination || 'N/A'} (${d.receiverState || 'N/A'})</td></tr>
-                        <tr><td style="padding: 4px; font-weight: bold;">House Address:</td><td style="padding: 4px;">${d.receiverHouseAddress || 'N/A'}</td></tr>
-                        <tr><td style="padding: 4px; font-weight: bold;">Email Address:</td><td style="padding: 4px;">${d.receiverEmail || 'N/A'}</td></tr>
-                        <tr><td style="padding: 4px; font-weight: bold;">Phone Number:</td><td style="padding: 4px;">${d.receiverPhone || 'N/A'}</td></tr>
-                        <tr><td style="padding: 4px; font-weight: bold;">Social Contact:</td><td style="padding: 4px;">${d.receiverSocialPhone || 'N/A'}</td></tr>
-                    </table>
-                </div>
-
-                <div style="margin-bottom: 20px; position: relative; z-index: 2;">
-                    <h3 style="background: #f0f4f8; padding: 6px 10px; margin: 0 0 10px 0; font-size: 13px; color: #333; font-weight: 700;">5. FINANCIAL CLEARANCE STATEMENT</h3>
-                    <table style="width: 100%; font-size: 11px; border-collapse: collapse;">
-                        <tr style="border-bottom: 1px solid #eee;"><td style="padding: 5px; font-weight: bold;">Declared Package Value:</td><td style="padding: 5px; text-align: right;">${d.totalCostOfPackage || '$0.00'}</td></tr>
-                        <tr style="border-bottom: 1px solid #eee;"><td style="padding: 5px; font-weight: bold;">Freight & Logistics Fee:</td><td style="padding: 5px; text-align: right;">Included</td></tr>
-                        <tr style="border-bottom: 1px solid #eee;"><td style="padding: 5px; font-weight: bold;">Customs Inspection Duty Fee:</td><td style="padding: 5px; text-align: right;">${d.customClearanceFee || '$0.00'}</td></tr>
-                        <tr><td style="padding: 8px; font-weight: bold; font-size: 13px;">Total Payable Amount:</td><td style="padding: 8px; text-align: right; font-weight: bold; font-size: 13px; color: #0088CC;">${d.totalCostOfPackage || '$0.00'}</td></tr>
-                    </table>
-                </div>
-
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 25px; padding-top: 15px; border-top: 2px dashed #bbb; position: relative; z-index: 2;">
-                    <div style="border: 3px double #0033aa; width: 130px; height: 130px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; color: #0033aa; transform: rotate(-8deg); box-sizing: border-box; padding: 5px;">
-                        <span style="font-size: 8px; font-weight: 800; letter-spacing: 0.5px;">SWIFTORA XPRESS</span>
-                        <span style="font-size: 16px; margin: 2px 0;">★ ★ ★</span>
-                        <span style="font-size: 9px; font-weight: 900; text-transform: uppercase; border-top: 1px solid #0033aa; border-bottom: 1px solid #0033aa; padding: 2px 0;">VERIFIED & PAID</span>
-                        <span style="font-size: 7px; margin-top: 2px;">CLEARANCE DEPT</span>
-                    </div>
-
-                    <div style="text-align: right; width: 200px;">
-                        <div style="font-family: 'Great Vibes', cursive, sans-serif; font-size: 32px; color: #001f54; margin-bottom: -8px;">
-                            S. E. Vance
-                        </div>
-                        <div style="border-top: 1.5px solid #333; padding-top: 4px; font-size: 11px; font-weight: bold; color: #222;">
-                            Authorized Officer
-                        </div>
-                        <div style="font-size: 9px; color: #666;">
-                            Swiftora Logistics Dispatch Operations
-                        </div>
-                    </div>
-                </div>
-
-                <div style="margin-top: 20px; text-align: center; font-size: 9px; color: #777;">
-                    Verified Digital Waybill Receipt &bull; Swiftora Xpress Logistics Terminal &bull; Issued: ${new Date().toLocaleString()}
+                <div class="node-details">
+                    <h4>${step.name}</h4>
+                    <p>${isActive ? 'Active Real-Time Waypoint Status' : (isCompleted ? 'Passed Telemetry Point' : 'Awaiting Aircraft Vector')}</p>
+                    ${tagMarkup}
                 </div>
             `;
-
-            const opt = {
-                margin:       8,
-                filename:     `Swiftora_Receipt_${currentTrackingId}.pdf`,
-                image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2 },
-                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            };
-
-            html2pdf().set(opt).from(pdfContainer).save();
+            container.appendChild(stepEl);
         });
-    </script>
+
+        if (isCustomHold && currentActiveIndex >= 5) {
+            statusBadge.className = "status-badge hold";
+            statusBadge.innerHTML = `<span class="pulse-dot pulse-red"></span> Action Required: Customs Clearance Pending`;
+            document.getElementById('customsAlert').style.display = 'flex';
+            document.getElementById('customsFeeAmount').innerText = customsFee;
+        } else {
+            statusBadge.className = "status-badge transit";
+            statusBadge.innerHTML = `<span class="pulse-dot pulse-blue"></span> Active Flight Transit In Progress`;
+            document.getElementById('customsAlert').style.display = 'none';
+        }
+    }
+
+    // PDF Generation Fix: Temporary DOM Mount + Standard Font Fallbacks
+    document.getElementById('downloadPdfBtn').addEventListener('click', async () => {
+        if (!liveShipmentData) {
+            alert("Shipment record loading... please try again in a moment.");
+            return;
+        }
+
+        const btn = document.getElementById('downloadPdfBtn');
+        btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Generating PDF Receipt...`;
+        btn.disabled = true;
+
+        const d = liveShipmentData;
+
+        // 1. Create container and force exact layout dimensions in standard light mode
+        const pdfContainer = document.createElement('div');
+        pdfContainer.id = "printable-receipt-pdf";
+        pdfContainer.style.width = '750px';
+        pdfContainer.style.padding = '30px';
+        pdfContainer.style.backgroundColor = '#ffffff';
+        pdfContainer.style.color = '#111111';
+        pdfContainer.style.fontFamily = 'Helvetica, Arial, sans-serif';
+        pdfContainer.style.position = 'absolute';
+        pdfContainer.style.top = '-9999px';
+        pdfContainer.style.left = '-9999px';
+
+        pdfContainer.innerHTML = `
+            <div style="position: absolute; top: 35%; left: 8%; transform: rotate(-30deg); font-size: 70px; font-weight: 900; color: rgba(16, 185, 129, 0.15); border: 8px solid rgba(16, 185, 129, 0.15); padding: 10px 30px; text-transform: uppercase; border-radius: 12px; pointer-events: none; z-index: 1;">
+                FULLY PAID
+            </div>
+
+            <div style="border-bottom: 2px solid #00F0FF; padding-bottom: 12px; margin-bottom: 18px; position: relative; z-index: 2;">
+                <h2 style="color: #0088CC; margin: 0; font-size: 22px; font-weight: bold;">SWIFTORA XPRESS LOGISTICS</h2>
+                <p style="margin: 3px 0 0 0; color: #555555; font-size: 12px;">Official Consignment Waybill & Freight Clearance Receipt</p>
+                <p style="margin: 4px 0 0 0; font-weight: bold; font-size: 13px; color: #000000;">Tracking ID: ${currentTrackingId}</p>
+            </div>
+
+            <div style="margin-bottom: 16px; position: relative; z-index: 2;">
+                <h3 style="background: #f0f4f8; padding: 5px 8px; margin: 0 0 8px 0; font-size: 12px; color: #333333; font-weight: bold;">1. CARRIER & SERVICE COMPANY</h3>
+                <table style="width: 100%; font-size: 11px; border-collapse: collapse;">
+                    <tr><td style="padding: 3px; font-weight: bold; width: 35%;">Delivery Company:</td><td style="padding: 3px;">${d.deliveryCompanyName || 'Swiftora Xpress Logistics'}</td></tr>
+                    <tr><td style="padding: 3px; font-weight: bold;">Company Address:</td><td style="padding: 3px;">${d.deliveryCompanyAddress || 'Global Station Facility'}</td></tr>
+                    <tr><td style="padding: 3px; font-weight: bold;">Company Contact:</td><td style="padding: 3px;">${d.deliveryCompanyPhone || '+1 (800) SWIFTORA'}</td></tr>
+                </table>
+            </div>
+
+            <div style="margin-bottom: 16px; position: relative; z-index: 2;">
+                <h3 style="background: #f0f4f8; padding: 5px 8px; margin: 0 0 8px 0; font-size: 12px; color: #333333; font-weight: bold;">2. CONSIGNMENT SPECIFICATIONS</h3>
+                <table style="width: 100%; font-size: 11px; border-collapse: collapse;">
+                    <tr><td style="padding: 3px; font-weight: bold; width: 35%;">Package Description:</td><td style="padding: 3px;">${d.packageName || 'N/A'}</td></tr>
+                    <tr><td style="padding: 3px; font-weight: bold;">Freight Weight:</td><td style="padding: 3px;">${d.packageWeight || 'N/A'}</td></tr>
+                    <tr><td style="padding: 3px; font-weight: bold;">Dispatch Date:</td><td style="padding: 3px;">${d.dateOfSent ? new Date(d.dateOfSent).toLocaleString() : 'N/A'}</td></tr>
+                    <tr><td style="padding: 3px; font-weight: bold;">Estimated Arrival (ETA):</td><td style="padding: 3px;">${d.dateToBeReceived ? new Date(d.dateToBeReceived).toLocaleString() : 'N/A'}</td></tr>
+                </table>
+            </div>
+
+            <div style="margin-bottom: 16px; position: relative; z-index: 2;">
+                <h3 style="background: #f0f4f8; padding: 5px 8px; margin: 0 0 8px 0; font-size: 12px; color: #333333; font-weight: bold;">3. SHIPPER DETAILS</h3>
+                <table style="width: 100%; font-size: 11px; border-collapse: collapse;">
+                    <tr><td style="padding: 3px; font-weight: bold; width: 35%;">Shipper Full Name:</td><td style="padding: 3px;">${d.senderFullName || 'N/A'}</td></tr>
+                    <tr><td style="padding: 3px; font-weight: bold;">Dispatch Address:</td><td style="padding: 3px;">${d.senderAddress || 'N/A'}</td></tr>
+                    <tr><td style="padding: 3px; font-weight: bold;">Current Location:</td><td style="padding: 3px;">${d.senderCurrentLocation || 'N/A'}</td></tr>
+                    <tr><td style="padding: 3px; font-weight: bold;">Passport ID:</td><td style="padding: 3px;">${d.senderPassportId || 'N/A'}</td></tr>
+                    <tr><td style="padding: 3px; font-weight: bold;">Sender SSN:</td><td style="padding: 3px;">${d.senderSSN || 'N/A'}</td></tr>
+                </table>
+            </div>
+
+            <div style="margin-bottom: 16px; position: relative; z-index: 2;">
+                <h3 style="background: #f0f4f8; padding: 5px 8px; margin: 0 0 8px 0; font-size: 12px; color: #333333; font-weight: bold;">4. RECEIVER RECORDS</h3>
+                <table style="width: 100%; font-size: 11px; border-collapse: collapse;">
+                    <tr><td style="padding: 3px; font-weight: bold; width: 35%;">Receiver Full Name:</td><td style="padding: 3px;">${d.receiverFullName || 'N/A'}</td></tr>
+                    <tr><td style="padding: 3px; font-weight: bold;">Destination Country/State:</td><td style="padding: 3px;">${d.countryOfDestination || 'N/A'} (${d.receiverState || 'N/A'})</td></tr>
+                    <tr><td style="padding: 3px; font-weight: bold;">House Address:</td><td style="padding: 3px;">${d.receiverHouseAddress || 'N/A'}</td></tr>
+                    <tr><td style="padding: 3px; font-weight: bold;">Email Address:</td><td style="padding: 3px;">${d.receiverEmail || 'N/A'}</td></tr>
+                    <tr><td style="padding: 3px; font-weight: bold;">Phone Number:</td><td style="padding: 3px;">${d.receiverPhone || 'N/A'}</td></tr>
+                    <tr><td style="padding: 3px; font-weight: bold;">Social Contact:</td><td style="padding: 3px;">${d.receiverSocialPhone || 'N/A'}</td></tr>
+                </table>
+            </div>
+
+            <div style="margin-bottom: 20px; position: relative; z-index: 2;">
+                <h3 style="background: #f0f4f8; padding: 5px 8px; margin: 0 0 8px 0; font-size: 12px; color: #333333; font-weight: bold;">5. FINANCIAL CLEARANCE STATEMENT</h3>
+                <table style="width: 100%; font-size: 11px; border-collapse: collapse;">
+                    <tr style="border-bottom: 1px solid #eeeeee;"><td style="padding: 4px; font-weight: bold;">Declared Package Value:</td><td style="padding: 4px; text-align: right;">${d.totalCostOfPackage || '$0.00'}</td></tr>
+                    <tr style="border-bottom: 1px solid #eeeeee;"><td style="padding: 4px; font-weight: bold;">Freight & Logistics Fee:</td><td style="padding: 4px; text-align: right;">Included</td></tr>
+                    <tr style="border-bottom: 1px solid #eeeeee;"><td style="padding: 4px; font-weight: bold;">Customs Inspection Fee:</td><td style="padding: 4px; text-align: right;">${d.customClearanceFee || '$0.00'}</td></tr>
+                    <tr><td style="padding: 6px; font-weight: bold; font-size: 12px;">Total Payable Amount:</td><td style="padding: 6px; text-align: right; font-weight: bold; font-size: 12px; color: #0088CC;">${d.totalCostOfPackage || '$0.00'}</td></tr>
+                </table>
+            </div>
+
+            <table style="width: 100%; margin-top: 20px; border-top: 2px dashed #cccccc; padding-top: 15px; position: relative; z-index: 2;">
+                <tr>
+                    <td style="vertical-align: middle;">
+                        <div style="border: 3px double #0033aa; width: 120px; height: 120px; border-radius: 50%; text-align: center; color: #0033aa; transform: rotate(-8deg); box-sizing: border-box; padding: 6px;">
+                            <div style="font-size: 8px; font-weight: bold; margin-top: 8px;">SWIFTORA XPRESS</div>
+                            <div style="font-size: 12px; margin: 2px 0;">★ ★ ★</div>
+                            <div style="font-size: 9px; font-weight: bold; border-top: 1px solid #0033aa; border-bottom: 1px solid #0033aa; padding: 2px 0;">VERIFIED & PAID</div>
+                            <div style="font-size: 7px; margin-top: 3px;">CLEARANCE DEPT</div>
+                        </div>
+                    </td>
+                    <td style="text-align: right; vertical-align: bottom;">
+                        <div style="font-family: 'Brush Script MT', 'Great Vibes', cursive, sans-serif; font-size: 28px; color: #001f54; font-weight: bold; margin-bottom: -5px;">
+                            S. E. Vance
+                        </div>
+                        <div style="border-top: 1px solid #333333; display: inline-block; width: 180px; padding-top: 3px; font-size: 11px; font-weight: bold; color: #111111;">
+                            Authorized Officer
+                        </div>
+                        <div style="font-size: 9px; color: #555555; margin-top: 2px;">
+                            Swiftora Logistics Dispatch Operations
+                        </div>
+                    </td>
+                </tr>
+            </table>
+
+            <div style="margin-top: 20px; text-align: center; font-size: 9px; color: #777777;">
+                Verified Digital Waybill Receipt &bull; Swiftora Xpress Terminal &bull; Issued: ${new Date().toLocaleString()}
+            </div>
+        `;
+
+        // 2. Mount temporarily to DOM so html2canvas renders it fully
+        document.body.appendChild(pdfContainer);
+
+        const opt = {
+            margin:       10,
+            filename:     `Swiftora_Receipt_${currentTrackingId}.pdf`,
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2, useCORS: true, logging: false },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+
+        try {
+            await html2pdf().set(opt).from(pdfContainer).save();
+        } catch (error) {
+            console.error("PDF Export Error:", error);
+            alert("Could not generate PDF. Please try again.");
+        } finally {
+            // 3. Clean up the container from DOM
+            document.body.removeChild(pdfContainer);
+            btn.innerHTML = `<i class="fa-solid fa-file-pdf"></i> Download Official Waybill Receipt (PDF)`;
+            btn.disabled = false;
+        }
+    });
+</script>
 </body>
 </html>
