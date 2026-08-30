@@ -1,10 +1,12 @@
 {
   "name": "Swiftora Xpress Logistics",
   "short_name": "Swiftora",
-  "start_url": "/index.html",
+  "description": "Enterprise Logistics & Real-Time Telemetry Tracking",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#050811",
   "theme_color": "#00F0FF",
+  "orientation": "portrait",
   "icons": [
     {
       "src": "swiftoralogo.png",
