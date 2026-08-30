@@ -610,7 +610,7 @@
     </script>
     <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
-  <script type="module">
+ <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
@@ -766,7 +766,7 @@
         }
     }
 
-    // Professional Receipt Window Generator
+    // Bold Grid Pattern Window Generator
     document.getElementById('downloadPdfBtn').addEventListener('click', () => {
         if (!liveShipmentData) {
             alert("Shipment details are still loading. Please wait a moment.");
@@ -774,307 +774,409 @@
         }
 
         const d = liveShipmentData;
-        const receiptWindow = window.open('', '_blank', 'width=900,height=950,scrollbars=yes');
+        const receiptWindow = window.open('', '_blank', 'width=950,height=1000,scrollbars=yes');
 
         const receiptHTML = `
             <!DOCTYPE html>
             <html lang="en">
             <head>
                 <meta charset="UTF-8">
-                <title>Waybill Receipt - ${currentTrackingId}</title>
+                <title>Waybill Grid Receipt - ${currentTrackingId}</title>
                 <link rel="preconnect" href="https://fonts.googleapis.com">
                 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-                <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Great+Vibes&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+                <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Oswald:wght@600;700&family=Plus+Jakarta+Sans:wght@500;700;800;900&display=swap" rel="stylesheet">
                 <style>
                     * { box-sizing: border-box; margin: 0; padding: 0; }
                     body {
-                        font-family: 'Inter', system-ui, -apple-system, sans-serif;
-                        background-color: #eef2f6;
-                        color: #1e293b;
-                        padding: 30px 15px;
-                        line-height: 1.5;
+                        font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+                        background-color: #0f172a;
+                        color: #0f172a;
+                        padding: 40px 20px;
+                        line-height: 1.4;
                     }
                     .action-bar {
-                        max-width: 800px;
+                        max-width: 900px;
                         margin: 0 auto 20px auto;
                         display: flex;
                         justify-content: space-between;
                         align-items: center;
                     }
                     .btn-print {
-                        background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+                        background: #2563eb;
                         color: #ffffff;
                         border: none;
-                        padding: 12px 24px;
-                        font-size: 14px;
-                        font-weight: 700;
+                        padding: 14px 32px;
+                        font-size: 16px;
+                        font-weight: 800;
+                        text-transform: uppercase;
+                        letter-spacing: 1px;
                         border-radius: 8px;
                         cursor: pointer;
-                        box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
+                        box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
                     }
-                    .btn-print:hover { opacity: 0.95; }
-                    
-                    /* RECEIPT CONTAINER */
+                    .btn-print:hover { background: #1d4ed8; }
+
+                    /* MAIN GRID CONTAINER */
                     .receipt-card {
                         background: #ffffff;
-                        max-width: 800px;
+                        max-width: 900px;
                         margin: 0 auto;
-                        padding: 50px 45px;
-                        border-radius: 4px;
-                        box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+                        padding: 40px;
+                        border: 3px solid #0f172a;
+                        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
                         position: relative;
                         overflow: hidden;
-                        border: 1px solid #e2e8f0;
                     }
-                    
-                    /* FULLY PAID WATERMARK */
+
+                    /* LARGE WATERMARK */
                     .watermark {
                         position: absolute;
-                        top: 38%;
-                        left: 14%;
-                        transform: rotate(-25deg);
-                        font-family: 'Inter', sans-serif;
-                        font-size: 72px;
-                        font-weight: 900;
-                        color: rgba(16, 185, 129, 0.08);
-                        border: 8px dashed rgba(16, 185, 129, 0.12);
-                        padding: 12px 40px;
+                        top: 35%;
+                        left: 5%;
+                        transform: rotate(-20deg);
+                        font-family: 'Oswald', sans-serif;
+                        font-size: 110px;
+                        font-weight: 700;
+                        color: rgba(16, 185, 129, 0.1);
+                        border: 12px dashed rgba(16, 185, 129, 0.15);
+                        padding: 10px 50px;
                         text-transform: uppercase;
-                        letter-spacing: 6px;
-                        border-radius: 16px;
+                        letter-spacing: 10px;
                         pointer-events: none;
                         user-select: none;
                     }
-                    
-                    /* HEADER */
-                    .header {
-                        display: flex;
-                        justify-content: space-between;
-                        align-items: flex-start;
-                        border-bottom: 2px solid #0f172a;
-                        padding-bottom: 20px;
+
+                    /* GRID HEADER */
+                    .grid-header {
+                        display: grid;
+                        grid-template-columns: 2fr 1fr;
+                        border: 3px solid #0f172a;
+                        background: #f8fafc;
                         margin-bottom: 25px;
                     }
-                    .brand-title {
-                        font-family: 'Cinzel', serif;
-                        font-size: 22px;
+                    .header-brand {
+                        padding: 20px;
+                        border-right: 3px solid #0f172a;
+                    }
+                    .header-brand h1 {
+                        font-family: 'Oswald', sans-serif;
+                        font-size: 34px;
+                        letter-spacing: 1.5px;
                         color: #0f172a;
-                        letter-spacing: 1px;
-                    }
-                    .brand-sub {
-                        font-size: 11px;
-                        color: #64748b;
+                        line-height: 1;
+                        margin-bottom: 5px;
                         text-transform: uppercase;
-                        letter-spacing: 1px;
-                        font-weight: 600;
-                        margin-top: 3px;
                     }
-                    .waybill-tag {
-                        text-align: right;
-                        background: #f8fafc;
-                        border: 1px solid #e2e8f0;
-                        padding: 8px 14px;
-                        border-radius: 6px;
-                    }
-                    .waybill-tag span {
-                        font-size: 10px;
-                        color: #64748b;
-                        text-transform: uppercase;
-                        display: block;
-                        font-weight: 700;
-                    }
-                    .waybill-tag strong {
-                        font-size: 13px;
-                        color: #0284c7;
-                    }
-
-                    /* SECTIONS & TABLES */
-                    .section-block { margin-bottom: 22px; }
-                    .section-title {
-                        font-size: 11px;
-                        font-weight: 800;
-                        color: #475569;
-                        text-transform: uppercase;
-                        letter-spacing: 0.8px;
-                        background: #f1f5f9;
-                        padding: 6px 12px;
-                        border-left: 3px solid #0284c7;
-                        margin-bottom: 10px;
-                    }
-                    table { width: 100%; font-size: 12px; border-collapse: collapse; }
-                    td { padding: 6px 8px; vertical-align: top; }
-                    .lbl { font-weight: 600; color: #475569; width: 35%; }
-                    .val { font-weight: 500; color: #0f172a; }
-
-                    /* FINANCIAL TABLE */
-                    .fin-table { margin-top: 8px; border: 1px solid #e2e8f0; }
-                    .fin-table td { border-bottom: 1px solid #f1f5f9; }
-                    .fin-table tr:last-child td { border-bottom: none; }
-                    .total-row td {
-                        background: #f8fafc;
+                    .header-brand p {
                         font-size: 13px;
                         font-weight: 800;
-                        color: #0f172a;
-                        padding: 10px 8px;
+                        color: #2563eb;
+                        text-transform: uppercase;
+                        letter-spacing: 1px;
                     }
-
-                    /* STAMP & SIGNATURE */
-                    .footer-signatures {
+                    .header-id {
+                        padding: 20px;
+                        background: #0f172a;
+                        color: #ffffff;
                         display: flex;
-                        justify-content: space-between;
-                        align-items: center;
-                        margin-top: 35px;
-                        padding-top: 20px;
-                        border-top: 1px dashed #cbd5e1;
+                        flex-direction: column;
+                        justify-content: center;
+                        align-items: flex-end;
                     }
-                    
-                    .official-stamp {
-                        border: 3px double #1e3a8a;
-                        width: 130px;
-                        height: 130px;
+                    .header-id span {
+                        font-size: 11px;
+                        text-transform: uppercase;
+                        letter-spacing: 1.5px;
+                        color: #94a3b8;
+                        font-weight: 800;
+                    }
+                    .header-id strong {
+                        font-family: 'Oswald', sans-serif;
+                        font-size: 22px;
+                        color: #38bdf8;
+                        letter-spacing: 1px;
+                    }
+
+                    /* SECTION TITLE BANNER */
+                    .banner-title {
+                        background: #0f172a;
+                        color: #ffffff;
+                        padding: 10px 16px;
+                        font-weight: 900;
+                        font-size: 14px;
+                        text-transform: uppercase;
+                        letter-spacing: 1px;
+                        margin-bottom: -3px;
+                    }
+
+                    /* GRID TILE LAYOUT */
+                    .grid-2col {
+                        display: grid;
+                        grid-template-columns: 1fr 1fr;
+                        border: 3px solid #0f172a;
+                        margin-bottom: 25px;
+                    }
+                    .grid-4col {
+                        display: grid;
+                        grid-template-columns: repeat(4, 1fr);
+                        border: 3px solid #0f172a;
+                        margin-bottom: 25px;
+                    }
+                    .grid-cell {
+                        padding: 12px 16px;
+                        border-right: 2px solid #0f172a;
+                        border-bottom: 2px solid #0f172a;
+                        background: #ffffff;
+                    }
+                    .grid-cell:nth-child(even) {
+                        background: #f8fafc;
+                    }
+                    .grid-cell-full {
+                        grid-column: 1 / -1;
+                        padding: 12px 16px;
+                        border-bottom: 2px solid #0f172a;
+                        background: #ffffff;
+                    }
+
+                    /* LABELS AND BOLD VALUES */
+                    .g-label {
+                        font-size: 11px;
+                        font-weight: 800;
+                        text-transform: uppercase;
+                        color: #64748b;
+                        letter-spacing: 0.5px;
+                        display: block;
+                        margin-bottom: 4px;
+                    }
+                    .g-val {
+                        font-size: 15px;
+                        font-weight: 800;
+                        color: #0f172a;
+                        word-break: break-word;
+                    }
+                    .g-val-lg {
+                        font-size: 22px;
+                        font-weight: 900;
+                        color: #2563eb;
+                    }
+
+                    /* STAMP AND SIGNATURE ROW */
+                    .bottom-grid {
+                        display: grid;
+                        grid-template-columns: 1fr 1.5fr;
+                        gap: 20px;
+                        align-items: center;
+                        margin-top: 30px;
+                        border-top: 3px dashed #0f172a;
+                        padding-top: 25px;
+                    }
+
+                    /* BOLD CIRCULAR STAMP */
+                    .stamp-wrapper {
+                        display: flex;
+                        justify-content: center;
+                    }
+                    .bold-stamp {
+                        border: 5px solid #1e40af;
+                        width: 140px;
+                        height: 140px;
                         border-radius: 50%;
                         display: flex;
                         flex-direction: column;
                         align-items: center;
                         justify-content: center;
                         text-align: center;
-                        color: #1e3a8a;
-                        transform: rotate(-8deg);
-                        padding: 6px;
+                        color: #1e40af;
+                        transform: rotate(-10deg);
+                        padding: 8px;
+                        background: rgba(239, 246, 255, 0.5);
                     }
-                    .stamp-top { font-size: 8px; font-weight: 800; letter-spacing: 0.5px; }
-                    .stamp-stars { font-size: 10px; margin: 2px 0; color: #1e3a8a; }
+                    .stamp-top { font-size: 10px; font-weight: 900; letter-spacing: 1px; }
                     .stamp-mid {
-                        font-size: 9px;
+                        font-size: 11px;
                         font-weight: 900;
                         text-transform: uppercase;
-                        border-top: 1px solid #1e3a8a;
-                        border-bottom: 1px solid #1e3a8a;
-                        padding: 2px 0;
+                        border-top: 2px solid #1e40af;
+                        border-bottom: 2px solid #1e40af;
+                        padding: 3px 0;
+                        margin: 4px 0;
                         width: 100%;
                     }
-                    .stamp-bot { font-size: 7px; font-weight: 700; margin-top: 2px; }
+                    .stamp-bot { font-size: 8px; font-weight: 800; }
 
-                    .signature-box { text-align: right; width: 220px; }
-                    .sig-script {
-                        font-family: 'Great Vibes', cursive;
-                        font-size: 34px;
-                        color: #0f172a;
-                        line-height: 1;
-                        margin-bottom: -4px;
+                    /* SIGNATURE BOX */
+                    .sig-container {
+                        text-align: right;
                     }
-                    .sig-line {
-                        border-top: 1.5px solid #334155;
-                        padding-top: 4px;
-                        font-size: 11px;
+                    .sig-font {
+                        font-family: 'Great Vibes', cursive;
+                        font-size: 42px;
                         font-weight: 700;
                         color: #0f172a;
+                        line-height: 0.9;
                     }
-                    .sig-sub { font-size: 9px; color: #64748b; margin-top: 1px; }
-
-                    .receipt-footer-note {
-                        margin-top: 30px;
-                        text-align: center;
+                    .sig-line {
+                        border-top: 3px solid #0f172a;
+                        display: inline-block;
+                        width: 220px;
+                        padding-top: 6px;
+                        font-size: 13px;
+                        font-weight: 900;
+                        text-transform: uppercase;
+                        color: #0f172a;
+                    }
+                    .sig-sub {
                         font-size: 10px;
-                        color: #94a3b8;
+                        font-weight: 700;
+                        color: #64748b;
+                        margin-top: 2px;
+                    }
+
+                    .footer-notice {
+                        text-align: center;
+                        margin-top: 30px;
+                        font-size: 11px;
+                        font-weight: 800;
+                        color: #64748b;
+                        text-transform: uppercase;
+                        letter-spacing: 1px;
                     }
 
                     @media print {
                         .action-bar { display: none; }
                         body { background: #ffffff; padding: 0; }
-                        .receipt-card { border: none; box-shadow: none; padding: 10px; }
+                        .receipt-card { border: 3px solid #0f172a; box-shadow: none; padding: 25px; }
                     }
                 </style>
             </head>
             <body>
                 <div class="action-bar">
-                    <span style="font-size: 13px; font-weight: 600; color: #475569;">Document Verification View</span>
+                    <span style="font-size: 14px; font-weight: 800; color: #ffffff; text-transform: uppercase;">Grid Document Mode</span>
                     <button class="btn-print" onclick="window.print()">Print / Save as PDF</button>
                 </div>
 
                 <div class="receipt-card">
                     <div class="watermark">FULLY PAID</div>
 
-                    <div class="header">
-                        <div>
-                            <div class="brand-title">SWIFTORA XPRESS</div>
-                            <div class="brand-sub">Consignment Clearance & Logistics Receipt</div>
+                    <!-- HEADER GRID -->
+                    <div class="grid-header">
+                        <div class="header-brand">
+                            <h1>SWIFTORA LOGISTICS</h1>
+                            <p>Official Freight Consignment Manifest</p>
                         </div>
-                        <div class="waybill-tag">
-                            <span>Waybill Tracking ID</span>
+                        <div class="header-id">
+                            <span>WAYBILL ID</span>
                             <strong>${currentTrackingId}</strong>
                         </div>
                     </div>
 
-                    <div class="section-block">
-                        <div class="section-title">1. Carrier & Service Provider</div>
-                        <table>
-                            <tr><td class="lbl">Delivery Carrier:</td><td class="val">${d.deliveryCompanyName || 'Swiftora Xpress Logistics Terminal'}</td></tr>
-                            <tr><td class="lbl">Station Address:</td><td class="val">${d.deliveryCompanyAddress || 'Global Station Facility Hub'}</td></tr>
-                            <tr><td class="lbl">Direct Contact:</td><td class="val">${d.deliveryCompanyPhone || '+1 (800) SWIFTORA'}</td></tr>
-                        </table>
-                    </div>
-
-                    <div class="section-block">
-                        <div class="section-title">2. Consignment Specifications</div>
-                        <table>
-                            <tr><td class="lbl">Package Description:</td><td class="val">${d.packageName || 'N/A'}</td></tr>
-                            <tr><td class="lbl">Freight Mass / Weight:</td><td class="val">${d.packageWeight || 'N/A'}</td></tr>
-                            <tr><td class="lbl">Dispatch Timestamp:</td><td class="val">${d.dateOfSent ? new Date(d.dateOfSent).toLocaleString() : 'N/A'}</td></tr>
-                            <tr><td class="lbl">Estimated Arrival (ETA):</td><td class="val">${d.dateToBeReceived ? new Date(d.dateToBeReceived).toLocaleString() : 'N/A'}</td></tr>
-                        </table>
-                    </div>
-
-                    <div class="section-block">
-                        <div class="section-title">3. Origin & Shipper Profile</div>
-                        <table>
-                            <tr><td class="lbl">Shipper Full Name:</td><td class="val">${d.senderFullName || 'N/A'}</td></tr>
-                            <tr><td class="lbl">Dispatch Address:</td><td class="val">${d.senderAddress || 'N/A'}</td></tr>
-                            <tr><td class="lbl">Current Location:</td><td class="val">${d.senderCurrentLocation || 'N/A'}</td></tr>
-                            <tr><td class="lbl">Passport ID:</td><td class="val">${d.senderPassportId || 'N/A'}</td></tr>
-                            <tr><td class="lbl">Sender SSN:</td><td class="val">${d.senderSSN || 'N/A'}</td></tr>
-                        </table>
-                    </div>
-
-                    <div class="section-block">
-                        <div class="section-title">4. Consignee / Receiver Manifest</div>
-                        <table>
-                            <tr><td class="lbl">Receiver Full Name:</td><td class="val">${d.receiverFullName || 'N/A'}</td></tr>
-                            <tr><td class="lbl">Destination Region:</td><td class="val">${d.countryOfDestination || 'N/A'} (${d.receiverState || 'N/A'})</td></tr>
-                            <tr><td class="lbl">Delivery Address:</td><td class="val">${d.receiverHouseAddress || 'N/A'}</td></tr>
-                            <tr><td class="lbl">Email Address:</td><td class="val">${d.receiverEmail || 'N/A'}</td></tr>
-                            <tr><td class="lbl">Phone Contact:</td><td class="val">${d.receiverPhone || 'N/A'}</td></tr>
-                            <tr><td class="lbl">Social Contact:</td><td class="val">${d.receiverSocialPhone || 'N/A'}</td></tr>
-                        </table>
-                    </div>
-
-                    <div class="section-block">
-                        <div class="section-title">5. Financial Clearance Breakdown</div>
-                        <table class="fin-table">
-                            <tr><td class="lbl">Declared Item Value:</td><td class="val" style="text-align: right;">${d.totalCostOfPackage || '$0.00'}</td></tr>
-                            <tr><td class="lbl">Base Freight Charges:</td><td class="val" style="text-align: right;">Paid / Included</td></tr>
-                            <tr><td class="lbl">Customs Duty Fee:</td><td class="val" style="text-align: right;">${d.customClearanceFee || '$0.00'}</td></tr>
-                            <tr class="total-row"><td class="lbl" style="color:#0f172a;">Total Payable Amount:</td><td style="text-align: right; color:#0284c7;">${d.totalCostOfPackage || '$0.00'}</td></tr>
-                        </table>
-                    </div>
-
-                    <div class="footer-signatures">
-                        <div class="official-stamp">
-                            <div class="stamp-top">SWIFTORA XPRESS</div>
-                            <div class="stamp-stars">★ ★ ★</div>
-                            <div class="stamp-mid">VERIFIED & PAID</div>
-                            <div class="stamp-bot">CLEARANCE DEPT</div>
+                    <!-- CARRIER & SERVICE GRID -->
+                    <div class="banner-title">1. Carrier Specification</div>
+                    <div class="grid-2col">
+                        <div class="grid-cell">
+                            <span class="g-label">Carrier Partner</span>
+                            <span class="g-val">${d.deliveryCompanyName || 'Swiftora Terminal'}</span>
                         </div>
-
-                        <div class="signature-box">
-                            <div class="sig-script">S. E. Vance</div>
-                            <div class="sig-line">Authorized Officer</div>
-                            <div class="sig-sub">Swiftora Logistics Dispatch Operations</div>
+                        <div class="grid-cell">
+                            <span class="g-label">Station Contact</span>
+                            <span class="g-val">${d.deliveryCompanyPhone || '+1 (800) SWIFTORA'}</span>
+                        </div>
+                        <div class="grid-cell-full">
+                            <span class="g-label">Hub Facility Address</span>
+                            <span class="g-val">${d.deliveryCompanyAddress || 'Global Distribution Station'}</span>
                         </div>
                     </div>
 
-                    <div class="receipt-footer-note">
-                        Official Terminal Receipt &bull; Swiftora Xpress Logistics Gateway &bull; Issued: ${new Date().toLocaleString()}
+                    <!-- PACKAGE SPECIFICATIONS GRID -->
+                    <div class="banner-title">2. Freight & Cargo Metadata</div>
+                    <div class="grid-4col">
+                        <div class="grid-cell">
+                            <span class="g-label">Package Name</span>
+                            <span class="g-val">${d.packageName || 'N/A'}</span>
+                        </div>
+                        <div class="grid-cell">
+                            <span class="g-label">Total Weight</span>
+                            <span class="g-val">${d.packageWeight || 'N/A'}</span>
+                        </div>
+                        <div class="grid-cell">
+                            <span class="g-label">Dispatch Date</span>
+                            <span class="g-val">${d.dateOfSent ? new Date(d.dateOfSent).toLocaleDateString() : 'N/A'}</span>
+                        </div>
+                        <div class="grid-cell">
+                            <span class="g-label">Arrival ETA</span>
+                            <span class="g-val">${d.dateToBeReceived ? new Date(d.dateToBeReceived).toLocaleDateString() : 'N/A'}</span>
+                        </div>
+                    </div>
+
+                    <!-- SHIPPER & CONSIGNEE GRID -->
+                    <div class="banner-title">3. Origin Shipper & Destination Receiver</div>
+                    <div class="grid-2col">
+                        <div class="grid-cell">
+                            <span class="g-label">Shipper Full Name</span>
+                            <span class="g-val">${d.senderFullName || 'N/A'}</span>
+                        </div>
+                        <div class="grid-cell">
+                            <span class="g-label">Receiver Full Name</span>
+                            <span class="g-val">${d.receiverFullName || 'N/A'}</span>
+                        </div>
+                        <div class="grid-cell">
+                            <span class="g-label">Shipper Address</span>
+                            <span class="g-val">${d.senderAddress || 'N/A'}</span>
+                        </div>
+                        <div class="grid-cell">
+                            <span class="g-label">Destination House Address</span>
+                            <span class="g-val">${d.receiverHouseAddress || 'N/A'}</span>
+                        </div>
+                        <div class="grid-cell">
+                            <span class="g-label">Shipper Passport / SSN</span>
+                            <span class="g-val">${d.senderPassportId || 'N/A'} / ${d.senderSSN || 'N/A'}</span>
+                        </div>
+                        <div class="grid-cell">
+                            <span class="g-label">Receiver Contact Phone</span>
+                            <span class="g-val">${d.receiverPhone || 'N/A'}</span>
+                        </div>
+                    </div>
+
+                    <!-- FINANCIAL STATEMENT GRID -->
+                    <div class="banner-title">4. Financial Clearance Ledger</div>
+                    <div class="grid-4col">
+                        <div class="grid-cell">
+                            <span class="g-label">Declared Value</span>
+                            <span class="g-val">${d.totalCostOfPackage || '$0.00'}</span>
+                        </div>
+                        <div class="grid-cell">
+                            <span class="g-label">Customs Duty Fee</span>
+                            <span class="g-val">${d.customClearanceFee || '$0.00'}</span>
+                        </div>
+                        <div class="grid-cell">
+                            <span class="g-label">Freight Charge</span>
+                            <span class="g-val">PAID / INCLUDED</span>
+                        </div>
+                        <div class="grid-cell" style="background: #eff6ff;">
+                            <span class="g-label" style="color: #2563eb;">Total Paid Amount</span>
+                            <span class="g-val-lg">${d.totalCostOfPackage || '$0.00'}</span>
+                        </div>
+                    </div>
+
+                    <!-- STAMP & SIGNATURE SECTION -->
+                    <div class="bottom-grid">
+                        <div class="stamp-wrapper">
+                            <div class="bold-stamp">
+                                <div class="stamp-top">SWIFTORA LOGISTICS</div>
+                                <div class="stamp-mid">VERIFIED & PAID</div>
+                                <div class="stamp-bot">CLEARANCE TERMINAL</div>
+                            </div>
+                        </div>
+
+                        <div class="sig-container">
+                            <div class="sig-font">S. E. Vance</div>
+                            <div class="sig-line">Authorized Dispatch Officer</div>
+                            <div class="sig-sub">Swiftora Freight Operations Command</div>
+                        </div>
+                    </div>
+
+                    <div class="footer-notice">
+                        Verified Digital Receipt &bull; Swiftora Xpress Global Network &bull; Issued: ${new Date().toLocaleString()}
                     </div>
                 </div>
             </body>
