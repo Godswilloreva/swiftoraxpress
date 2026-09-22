@@ -184,15 +184,21 @@
             color: var(--brand-primary);
         }
 
+        .status-badge.cleared {
+            background: rgba(16, 185, 129, 0.12);
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            color: var(--success);
+        }
+
         .pulse-dot {
             width: 8px;
             height: 8px;
             border-radius: 50%;
-            animation: pulseAnim 1.5s infinite;
         }
 
-        .pulse-red { background: var(--danger); box-shadow: 0 0 10px var(--danger); }
-        .pulse-blue { background: var(--brand-primary); box-shadow: 0 0 10px var(--brand-primary); }
+        .pulse-red { background: var(--danger); box-shadow: 0 0 10px var(--danger); animation: pulseAnim 1.5s infinite; }
+        .pulse-blue { background: var(--brand-primary); box-shadow: 0 0 10px var(--brand-primary); animation: pulseAnim 1.5s infinite; }
+        .pulse-green { background: var(--success); box-shadow: 0 0 10px var(--success); }
 
         @keyframes pulseAnim {
             0% { opacity: 1; transform: scale(1); }
@@ -398,6 +404,11 @@
             align-items: flex-start;
         }
 
+        .customs-alert-card.paid {
+            background: rgba(16, 185, 129, 0.08);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
         .alert-icon-wrap {
             width: 42px;
             height: 42px;
@@ -409,6 +420,11 @@
             justify-content: center;
             font-size: 1.2rem;
             flex-shrink: 0;
+        }
+
+        .customs-alert-card.paid .alert-icon-wrap {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
         }
 
         .fee-tag { color: var(--danger); font-weight: 800; font-size: 1.1rem; }
@@ -475,12 +491,12 @@
                     <div class="timeline-container" id="timeline"></div>
 
                     <div class="customs-alert-card" id="customsAlert" style="display:none;">
-                        <div class="alert-icon-wrap">
+                        <div class="alert-icon-wrap" id="alertIcon">
                             <i class="fa-solid fa-triangle-exclamation"></i>
                         </div>
                         <div class="alert-body">
-                            <h4 style="color:var(--danger); font-size:1.05rem; margin-bottom:6px;">Customs Inspection Hold</h4>
-                            <p style="font-size:0.88rem;">An outstanding clearance fee of <span class="fee-tag" id="customsFeeAmount">$0.00</span> is required to pass airport clearance and release package for door delivery.</p>
+                            <h4 id="alertHeading" style="color:var(--danger); font-size:1.05rem; margin-bottom:6px;">Customs Inspection Hold</h4>
+                            <p id="alertBodyText" style="font-size:0.88rem;">An outstanding clearance fee of <span class="fee-tag" id="customsFeeAmount">$0.00</span> is required to pass airport clearance and release package for door delivery.</p>
                         </div>
                     </div>
                 </div>
@@ -691,6 +707,7 @@
         const elapsedMinutes = Math.floor((now - sendTime) / (1000 * 60));
 
         const isCustomHold = data.customHold === true || data.customHold === "true";
+        const isCustomPaid = data.customPaid === true || data.customPaid === "true"; // Parse customPaid boolean
         const arrivedDestination = data.arrivedAtDestination === true || data.arrivedAtDestination === "true";
         const customsFee = data.customClearanceFee || "$0.00";
 
@@ -700,12 +717,17 @@
             { name: "Package Left Country of Origin", delay: 30, icon: "fa-plane-departure" },
             { name: `In Flight Transit to ${data.countryOfDestination || 'Destination'} ✈️`, delay: 120, icon: "fa-plane" },
             { name: `Arrived at Country of Destination (${data.countryOfDestination || 'Hub'})`, delay: 1440, forceTrigger: arrivedDestination, icon: "fa-plane-arrival" },
-            { name: "Customs Hold Inspection", delay: 1500, forceTrigger: isCustomHold, icon: "fa-shield-cat" },
-            { name: "Customs Clearance Fee Active", delay: 1520, forceTrigger: isCustomHold, icon: "fa-triangle-exclamation" }
+            { name: isCustomPaid ? "Customs Clearance Paid" : "Customs Hold Inspection", delay: 1500, forceTrigger: isCustomHold || isCustomPaid, icon: isCustomPaid ? "fa-circle-check" : "fa-shield-cat" },
+            { name: isCustomPaid ? `Dispatched for Delivery to ${data.receiverHouseAddress || 'Receiver Address'}` : "Customs Clearance Fee Active", delay: 1520, forceTrigger: isCustomHold || isCustomPaid, icon: isCustomPaid ? "fa-truck-fast" : "fa-triangle-exclamation" }
         ];
 
         const container = document.getElementById('timeline');
         const statusBadge = document.getElementById('statusBadge');
+        const customsAlertCard = document.getElementById('customsAlert');
+        const alertIcon = document.getElementById('alertIcon');
+        const alertHeading = document.getElementById('alertHeading');
+        const alertBodyText = document.getElementById('alertBodyText');
+
         container.innerHTML = "";
 
         let currentActiveIndex = 0;
@@ -720,12 +742,12 @@
             const stepEl = document.createElement('div');
             const isCompleted = idx < currentActiveIndex;
             const isActive = idx === currentActiveIndex;
-            const isHoldStep = (step.name.includes("Customs Hold") || step.name.includes("Clearance Fee")) && isCustomHold;
+            const isHoldStep = (step.name.includes("Customs Hold") || step.name.includes("Clearance Fee")) && isCustomHold && !isCustomPaid;
 
             let stateClass = "";
             let tagMarkup = "";
 
-            if (isCompleted) {
+            if (isCompleted || (isCustomPaid && idx <= currentActiveIndex)) {
                 stateClass = "completed";
                 tagMarkup = `<span class="tag-status tag-completed">Completed</span>`;
             } else if (isActive) {
@@ -743,7 +765,7 @@
             stepEl.className = `timeline-step ${stateClass}`;
             stepEl.innerHTML = `
                 <div class="node-icon">
-                    <i class="fa-solid ${isCompleted ? 'fa-check' : (isActive && isHoldStep ? 'fa-triangle-exclamation' : step.icon)}"></i>
+                    <i class="fa-solid ${(isCompleted || isCustomPaid) ? 'fa-check' : (isActive && isHoldStep ? 'fa-triangle-exclamation' : step.icon)}"></i>
                 </div>
                 <div class="node-details">
                     <h4>${step.name}</h4>
@@ -754,15 +776,31 @@
             container.appendChild(stepEl);
         });
 
-        if (isCustomHold && currentActiveIndex >= 5) {
+        // UPDATE STATUS BADGE & ALERT CARD LOGIC
+        if (isCustomPaid) {
+            statusBadge.className = "status-badge cleared";
+            statusBadge.innerHTML = `<span class="pulse-dot pulse-green"></span> custom clearance paid, delivery to receiver house address`;
+
+            customsAlertCard.style.display = 'flex';
+            customsAlertCard.className = 'customs-alert-card paid';
+            alertIcon.innerHTML = `<i class="fa-solid fa-circle-check"></i>`;
+            alertHeading.style.color = 'var(--success)';
+            alertHeading.innerText = 'Customs Clearance Paid';
+            alertBodyText.innerHTML = `Customs clearance fee has been fully verified. Your consignment is released and currently on route for direct delivery to: <strong>${data.receiverHouseAddress || 'Receiver House Address'}</strong>.`;
+        } else if (isCustomHold && currentActiveIndex >= 5) {
             statusBadge.className = "status-badge hold";
             statusBadge.innerHTML = `<span class="pulse-dot pulse-red"></span> Action Required: Customs Clearance Pending`;
-            document.getElementById('customsAlert').style.display = 'flex';
-            document.getElementById('customsFeeAmount').innerText = customsFee;
+
+            customsAlertCard.style.display = 'flex';
+            customsAlertCard.className = 'customs-alert-card';
+            alertIcon.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i>`;
+            alertHeading.style.color = 'var(--danger)';
+            alertHeading.innerText = 'Customs Inspection Hold';
+            alertBodyText.innerHTML = `An outstanding clearance fee of <span class="fee-tag" id="customsFeeAmount">${customsFee}</span> is required to pass airport clearance and release package for door delivery.`;
         } else {
             statusBadge.className = "status-badge transit";
             statusBadge.innerHTML = `<span class="pulse-dot pulse-blue"></span> Active Flight Transit In Progress`;
-            document.getElementById('customsAlert').style.display = 'none';
+            customsAlertCard.style.display = 'none';
         }
     }
 
