@@ -34,3 +34,4 @@ Package Info
 	totalCostOfPackage							string	$2,850.00
     Destination	countryOfDestination			string	Nigeria
 	arrivedAtDestination						boolean	TRUE
+customPaid.                    boolean	TRUE
